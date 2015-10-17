@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MyShows Recent</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <form name="form">
+
+      <h4>Основные настройки</h4>
+
+      <ul class="options-list">
+        <li>
+          <label>
+            <input type="checkbox" name="notification"> Оповещать о новых эпизодах
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox" name="badge"> Отображать количество новых сериалов
+          </label>
+        </li>
+      </ul>
+
+      <h4>На каких ресурсах вы смотрите сериалы?</h4>
+
+      <ul class="options-list">
+        <li>
+          <label>
+            <input type="checkbox" name="resources" value="fsto"> fs.to
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox" name="resources" value="exua"> ex.ua
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox" name="resources" value="rutrackerorg"> rutracker.org
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox" name="resources" value="nnmclubme" disabled> nnm-club.me
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox" name="resources" value="rutororg"> rutor.org
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox" name="resources" value="kickassto"> kickass.to
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox" name="resources" value="hdrezkame"> hdrezka.me
+          </label>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox" name="resources" value="seasonvarru"> seasonvar.ru
+          </label>
+        </li>
+      </ul>
+
+      <p class="text-right">
+        <span id="status" class="options-status">Настройки сохранены</span>
+        <input type="submit" value="Сохранить" /></input>
+      </p>
+
+    </form>
+
+  </div>
+
+  <script type="text/javascript" src="scripts/app.js"></script>
+  <script type="text/javascript" src="scripts/options.js"></script>
+</body>
+</html>
