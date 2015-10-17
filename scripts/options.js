@@ -24,7 +24,7 @@ function saveOptions(e) {
 }
 
 function restoreOptions() {
-	api.getOptions(function(options) {
+	app.getOptions(function(options) {
 		form.elements['notification'].checked = options.notification;
 		form.elements['badge'].checked = options.badge;
 
