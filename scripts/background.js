@@ -1,18 +1,15 @@
 setInterval(function() {
 	if (!app.isAuthorized()) return;
-	app.getOptions(function(options) {
-		if (!options.notification) return;
+
+	app.unwatched(function(unwatched) {
+
+		var newEpisodes = getNewEpisodes(unwatched);
+		if (newEpisodes.length) createNotification(newEpisodes);
+
+		app.localSave('unwatched', unwatched);
+		app.updateBadge(app.getUnwatchedShows().length);			
 		
-		app.unwatched(function(unwatched) {
-
-			var newEpisodes = getNewEpisodes(unwatched);
-			if (newEpisodes.length) createNotification(newEpisodes);
-
-			app.localSave('unwatched', unwatched);
-			app.updateBadge(app.getUnwatchedShows().length);			
-			
-		})
-	});
+	})
 }, 300000);
 
 function getNewEpisodes(unwatched) {

@@ -9,6 +9,12 @@ function init(chromeOptions) {
 	});
 	authForm.addEventListener('submit', authorize);
 	checkAuth();
+	
+	if (app.localGet('shows') && app.localGet('unwatched')) {
+		buildUnwatchedList();		
+	} else {
+		updateShows();
+	}
 };
 
 
@@ -16,7 +22,6 @@ function checkAuth() {
 	if (app.isAuthorized()) {
 		document.getElementById('loginView').style.display = 'none';
 		document.getElementById('showsView').style.display = 'block';
-		updateShows();
 	} else {
 		document.getElementById('loginView').style.display = 'block';
 		document.getElementById('showsView').style.display = 'none';		
@@ -45,7 +50,6 @@ function authorize(e) {
 
 function updateShows() {
 	showLoading();
-	buildUnwatchedList();
 
 	app.shows(function(data, status) {
 		if (status == 401) return;
@@ -62,6 +66,16 @@ function updateShows() {
 
 function buildUnwatchedList() {
 	var unwatchedShows = app.getUnwatchedShows();
+
+	unwatchedShows.sort(function(a,b) {
+		var reg = /(\d{2})\.(\d{2})\.(\d{4})/;
+		a = a.unwatchedEpisodesData[0].airDate.match(reg);
+		b = b.unwatchedEpisodesData[0].airDate.match(reg);
+		a = Date.parse(a[3]+'-'+a[2]+'-'+a[1]);
+		b = Date.parse(b[3]+'-'+b[2]+'-'+b[1]);
+		return b - a;
+	})
+	
 	var listPattern = document.getElementById('shows-list-tmp').innerHTML;
 	var unwatchedList = document.getElementById('unwatchedList');
 	unwatchedList.innerHTML = '';	
@@ -130,4 +144,4 @@ function numFormat(num) {
 	(lastEpisode.seasonNumber.toString().length == 1) ? '0' + lastEpisode.seasonNumber : lastEpisode.seasonNumber
 }
 
-app.getOptions(init)
+app.getOptions(init);

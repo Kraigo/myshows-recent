@@ -63,7 +63,7 @@ var app = {
 		localStorage[key] = JSON.stringify(data);
 	},
 	localGet: function(key) {
-		return localStorage[key] ? JSON.parse(localStorage[key]) : [];
+		return localStorage[key] ? JSON.parse(localStorage[key]) : false;
 	},
 	numFormat: function(num) {
 		return (num.toString().length == 1) ? '0' + num : num;
@@ -108,22 +108,25 @@ var app = {
 		return result;
 	},
 	notification: function(type, title, body, image) {
+		app.getOptions(function(options) {
+			if (!options.notification) return;
+			var options = {
+				type: type,
+				title: title,
+				iconUrl: 'images/icon-128.png'			
+			};
 
-		var options = {
-			type: type,
-			title: title,
-			iconUrl: 'images/icon-128.png'			
-		};
+			if (type == 'list') {
+				options.message = '';
+				options.items = body;
+			} else if (type == 'image') {
+				options.message = body;
+				options.imageUrl = image
+			}
+			
+			chrome.notifications.create(null, options, function () {});
 
-		if (type == 'list') {
-			options.message = '';
-			options.items = body;
-		} else if (type == 'image') {
-			options.message = body;
-			options.imageUrl = image
-		}
-		
-		chrome.notifications.create(null, options, function () {});
+		})
 	},
 	getAllowedResources: function(resources) {
 		var result = [];
