@@ -37,7 +37,6 @@ function authorize(e) {
 			app.localSave('auth', {login: login, password: password});
 			checkAuth();
 		} else if (status == 403) {
-			console.log(1);
 			document.getElementById('loginMessage').style.display = 'block';
 			document.getElementById('loginMessage').innerHTML = 'Неверный логин или пароль'
 		}
@@ -65,7 +64,7 @@ function buildUnwatchedList() {
 	var unwatchedShows = app.getUnwatchedShows();
 	var listPattern = document.getElementById('shows-list-tmp').innerHTML;
 	var unwatchedList = document.getElementById('unwatchedList');
-	unwatchedList.innerHTML = '';
+	unwatchedList.innerHTML = '';	
 
 	app.updateBadge(unwatchedShows.length);
 
@@ -78,10 +77,8 @@ function buildUnwatchedList() {
 				id: show.showId,
 				seasonNum: app.numFormat(lastEpisode.seasonNumber),
 				episodeNum: app.numFormat(lastEpisode.episodeNumber),
-				resources: options.resources
-
+				resources: app.getAllowedResources(options.resources)
 			};
-
 		elementLi.innerHTML = fillPattern(listPattern, dataPattern);
 		elementLi.querySelector('.shows-check').addEventListener('click', function() {
 			app.checkEpisode(lastEpisode.episodeId, updateShows);

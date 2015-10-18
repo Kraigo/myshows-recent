@@ -57,47 +57,9 @@
 		</h2>
 		<div class="shows-resources">
 			{{resources:}}
-				{{resources.fsto:}}
-				<a href="http://fs.to/video/serials/search.aspx?search={{title}}" target="_blank">
-					<span class="show-icon icon-fsto"></span>
+				<a href="{{resources.link}}{{title}}" target="_blank">
+					<span class="show-icon icon-{{resources.title}}"></span>
 				</a>
-				{{:resources.fsto}}
-				{{resources.exua:}}
-				<a href="http://www.ex.ua/search?s={{title}}" target="_blank">				
-					<span class="show-icon icon-exua"></span>
-				</a>
-				{{:resources.exua}}
-				{{resources.rutrackerorg:}}
-				<a href="http://rutracker.org/forum/search_cse.php?cx=014434608714260776013%3Aggcq1kovlga&cof=FORID%3A9&ie=utf-8&q={{title}}&sa=%D0%9F%D0%BE%D0%B8%D1%81%D0%BA+%D0%B2+Google" target="_blank">
-					<span class="show-icon icon-rutracker"></span>
-				</a>
-				{{:resources.rutrackerorg}}
-				{{resources.rutororg:}}
-				<a href="http://rutor.org/search/0/4/000/0/{{title}}" target="_blank">
-					<span class="show-icon icon-rutororg"></span>
-				</a>
-				{{:resources.rutororg}}
-				{{resources.nnmclubme:}}
-				<a href="http://nnm-club.me/?q={{title}}&w=title" target="_blank">
-					<span class="show-icon icon-nnmclubme"></span>
-				</a>
-				{{:resources.nnmclubme}}
-				{{resources.kickassto:}}
-				<a href="https://kat.cr/usearch/{{title}}" target="_blank">
-					<span class="show-icon icon-kickassto"></span>
-				</a>
-				{{:resources.kickassto}}
-				{{resources.hdrezkame:}}
-				<a href="http://hdrezka.me/index.php?do=search&subaction=search&q={{title}}" target="_blank">
-					<span class="show-icon icon-hdrezkame"></span>
-				</a>
-				{{:resources.hdrezkame}}
-				{{resources.seasonvarru:}}
-				<a href="http://seasonvar.ru/search?q={{title}}&x=0&y=0" target="_blank">
-					<span class="show-icon icon-seasonvarru"></span>
-				</a>
-				{{:resources.seasonvarru}}
-
 			{{:resources}}
 		</div>
 		<div class="shows-control" title="Отметить как просмотреный">

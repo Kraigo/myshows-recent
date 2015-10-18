@@ -1,5 +1,17 @@
 var app = {
 	baseUrl: 'http://api.myshows.ru/',
+	resources: {
+		fsto: 'http://fs.to/video/serials/search.aspx?search=',
+		exua: 'http://www.ex.ua/search?s=',
+		rutrackerorg: 'http://rutracker.org/forum/search_cse.php?cx=014434608714260776013%3Aggcq1kovlga&cof=FORID%3A9&ie=utf-8&sa=%D0%9F%D0%BE%D0%B8%D1%81%D0%BA+%D0%B2+Google&q=',
+		rutororg: 'http://rutor.org/search/0/4/000/0/',
+		nnmclubme: 'http://nnm-club.me/?w=title&q=',
+		kickassto: 'https://kat.cr/usearch/',
+		hdrezkame: 'http://hdrezka.me/index.php?do=search&subaction=search&q=',
+		seasonvarru: 'http://seasonvar.ru/search?x=0&y=0&q=',
+		kinozaltv: 'http://kinozal.tv/browse.php?s='
+	},
+
 	get: function(method, callback) {
 		var xhr = new XMLHttpRequest();
 		xhr.open( "GET", this.baseUrl + method, true );
@@ -112,6 +124,14 @@ var app = {
 		}
 		
 		chrome.notifications.create(null, options, function () {});
+	},
+	getAllowedResources: function(resources) {
+		var result = [];
+		for (var i in resources) {
+			var res = resources[i];
+			result.push({title: res, link: this.resources[res]});
+		}
+		return result;
 	}
 
 };
