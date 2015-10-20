@@ -93,6 +93,7 @@ function buildUnwatchedList() {
 			};
 		elementLi.innerHTML = fillPattern(listPattern, dataPattern);
 		elementLi.querySelector('.shows-check').addEventListener('click', function() {
+			showLoading();
 			app.checkEpisode(lastEpisode.episodeId, updateShows);
 		});
 		if (new Date() - app.getEpisodeDate(show.unwatchedEpisodesData[0].airDate) < 86400000) {
