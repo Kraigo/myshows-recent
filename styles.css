@@ -37,14 +37,12 @@ body, html {
 }
 
 .shows-list {
-	margin: 0;
-	padding: 0;
+	padding: 0 10px;
+	margin: 0 -10px;
 	list-style: none;
 	max-height: 500px;
 	overflow-y: auto;
 	overflow-x: hidden;
-	padding-right: 10px;
-	margin-right: -10px;
 }
 .shows-list::-webkit-scrollbar {
     width: 5px;
@@ -66,9 +64,15 @@ body, html {
 .shows-list > li:not(:last-child) {
 	border-bottom: 1px solid #eee;
 }
+.shows-recent .shows-title:after {
+	content: 'New';
+	color: #ca2027;
+	font-size: 0.6em;
+	vertical-align: top;
+}
 
 .shows-resources {
-	margin: 0 10px;
+	margin: 0 5px;
 	display: inline-block;
 }
 .shows-resources > a {
@@ -262,4 +266,10 @@ h4 {
 	opacity: 0;
 	margin-right: 1em;
 	transition: all 0.3s ease;
+}
+
+.container-options {
+	max-width: 450px;
+	margin: 0 auto;
+	background-color: #fff;
 }

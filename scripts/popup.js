@@ -68,11 +68,9 @@ function buildUnwatchedList() {
 	var unwatchedShows = app.getUnwatchedShows();
 
 	unwatchedShows.sort(function(a,b) {
-		var reg = /(\d{2})\.(\d{2})\.(\d{4})/;
-		a = a.unwatchedEpisodesData[0].airDate.match(reg);
-		b = b.unwatchedEpisodesData[0].airDate.match(reg);
-		a = Date.parse(a[3]+'-'+a[2]+'-'+a[1]);
-		b = Date.parse(b[3]+'-'+b[2]+'-'+b[1]);
+		
+		a = app.getEpisodeDate(a.unwatchedEpisodesData[0].airDate);
+		b = app.getEpisodeDate(b.unwatchedEpisodesData[0].airDate);
 		return b - a;
 	})
 	
@@ -96,7 +94,10 @@ function buildUnwatchedList() {
 		elementLi.innerHTML = fillPattern(listPattern, dataPattern);
 		elementLi.querySelector('.shows-check').addEventListener('click', function() {
 			app.checkEpisode(lastEpisode.episodeId, updateShows);
-		})
+		});
+		if (new Date() - app.getEpisodeDate(show.unwatchedEpisodesData[0].airDate) < 86400000) {
+			elementLi.className = 'shows-recent';
+		}
 		unwatchedList.appendChild(elementLi);
 
 	})

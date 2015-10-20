@@ -18,12 +18,15 @@ var app = {
 		xhr.setRequestHeader('Content-Type', 'application/json');
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState == 4) {
+				if (!xhr.status) return;
+
 				if (xhr.status == 401 && app.isAuthorized()) {
 					app.login();
 					app.get(method, callback);
 				} else if (xhr.status == 403) {
 					app.logout();
 				}
+
 				var success = (xhr.responseText[0] == '{') ? JSON.parse(xhr.responseText) : null;
 				callback ? callback(success, xhr.status) : '';
 			}
@@ -135,6 +138,10 @@ var app = {
 			result.push({title: res, link: this.resources[res]});
 		}
 		return result;
+	},
+	getEpisodeDate: function(date) {
+		var res = date.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+		return Date.parse(res[3]+'-'+res[2]+'-'+res[1]);
 	}
 
 };
