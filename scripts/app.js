@@ -11,6 +11,7 @@ var app = {
 		seasonvarru: 'http://seasonvar.ru/search?x=0&y=0&q=',
 		kinozaltv: 'http://kinozal.tv/browse.php?s='
 	},
+	options: null,
 
 	get: function(method, callback) {
 		var xhr = new XMLHttpRequest();

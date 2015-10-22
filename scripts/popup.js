@@ -1,7 +1,5 @@
-var options = null;
-
 function init(chromeOptions) {
-	options = chromeOptions;
+	app.options = chromeOptions;
 	document.getElementById('refreshBtn').addEventListener('click', updateShows);
 	document.getElementById('logoutBtn').addEventListener('click', function(){
 		app.logout();
@@ -89,7 +87,7 @@ function buildUnwatchedList() {
 				id: show.showId,
 				seasonNum: app.numFormat(lastEpisode.seasonNumber),
 				episodeNum: app.numFormat(lastEpisode.episodeNumber),
-				resources: app.getAllowedResources(options.resources)
+				resources: app.getAllowedResources(app.options.resources)
 			};
 		elementLi.innerHTML = fillPattern(listPattern, dataPattern);
 		elementLi.querySelector('.shows-check').addEventListener('click', function() {

@@ -3,6 +3,8 @@ setInterval(function() {
 
 	app.unwatched(function(unwatched) {
 
+		if (!unwatched) return;
+
 		var newEpisodes = getNewEpisodes(unwatched);
 		if (newEpisodes.length) createNotification(newEpisodes);
 
@@ -10,7 +12,7 @@ setInterval(function() {
 		app.updateBadge(app.getUnwatchedShows().length);			
 		
 	})
-}, 300000);
+}, 2700000);
 
 function getNewEpisodes(unwatched) {
 	var newEpisodes = [];
