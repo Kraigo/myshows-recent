@@ -44,6 +44,7 @@ var app = {
 	},
 	logout: function() {
 		localStorage.clear();
+		app.updateBadge('');
 	},
 	profile: function() {
 		this.get('profile');
@@ -59,6 +60,9 @@ var app = {
 	},
 	checkEpisode: function(episodeId, callback) {
 		this.get('profile/episodes/check/' + episodeId, callback);
+	},	
+	rateEpisode: function(episodeId, rate, callback) {
+		this.get('profile/episodes/rate/' + rate + '/' + episodeId, callback)
 	},
 	isAuthorized: function() {
 		return localStorage['auth'] != undefined;
@@ -87,7 +91,8 @@ var app = {
 		chrome.storage.sync.get({
 			notification: true,
 			badge: true,
-			resources: ['fs.to']
+			rate: false,
+			resources: ['fsto']
 		}, callback);
 	},
 	getUnwatchedShows: function(shows, unwatched) {

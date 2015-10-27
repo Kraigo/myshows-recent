@@ -7,7 +7,7 @@
 </head>
 <body>
 
-	<div class="loading-bar" id="loading-bar">
+	<div class="loading-bar" id="loading-bar" style="display: none">
 		<div class="bar"></div>
 		<div class="bar"></div>
 		<div class="bar"></div>
@@ -62,10 +62,19 @@
 				</a>
 			{{:resources}}
 		</div>
-		<div class="shows-control" title="Отметить как просмотреный">
-			<span class="shows-check">
-				<span class="shows-episode">s{{seasonNum}}e{{episodeNum}}</span>
-				<span class="icon icon-eye"></span>
+		<div class="shows-control">
+
+			<span class="shows-episode">s{{seasonNum}}e{{episodeNum}}</span>
+			<span class="shows-check" title="Отметить как просмотренный">
+				<select class="shows-rate" style="display: none">
+					<option value="" selected>★</option>
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+				</select>
+				<span class="icon icon-eye shows-mark"></span>
 			</span>
 			<span class="shows-badge" title="Количество новых эпизодов">{{badge}}</span>
 		</div>

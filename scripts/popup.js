@@ -3,26 +3,19 @@ function init(chromeOptions) {
 	document.getElementById('refreshBtn').addEventListener('click', updateShows);
 	document.getElementById('logoutBtn').addEventListener('click', function(){
 		app.logout();
-		checkAuth();
+		showView('loginView');
 	});
 	authForm.addEventListener('submit', authorize);
-	checkAuth();
-	
-	if (app.localGet('shows') && app.localGet('unwatched')) {
-		buildUnwatchedList();		
-	} else {
-		updateShows();
-	}
-};
-
-
-function checkAuth() {
 	if (app.isAuthorized()) {
-		document.getElementById('loginView').style.display = 'none';
-		document.getElementById('showsView').style.display = 'block';
+		showView('showsView');
+	
+		if (app.localGet('shows') && app.localGet('unwatched')) {
+			buildUnwatchedList();
+		} else {
+			updateShows();
+		}
 	} else {
-		document.getElementById('loginView').style.display = 'block';
-		document.getElementById('showsView').style.display = 'none';		
+		showView('loginView');
 	}
 };
 
@@ -38,7 +31,8 @@ function authorize(e) {
 		hideLoading();
 		if (status == 200) {
 			app.localSave('auth', {login: login, password: password});
-			checkAuth();
+			showView('showsView');
+			updateShows();
 		} else if (status == 403) {
 			document.getElementById('loginMessage').style.display = 'block';
 			document.getElementById('loginMessage').innerHTML = 'Неверный логин или пароль'
@@ -90,10 +84,19 @@ function buildUnwatchedList() {
 				resources: app.getAllowedResources(app.options.resources)
 			};
 		elementLi.innerHTML = fillPattern(listPattern, dataPattern);
-		elementLi.querySelector('.shows-check').addEventListener('click', function() {
+		elementLi.querySelector('.shows-mark').addEventListener('click', function() {
 			showLoading();
 			app.checkEpisode(lastEpisode.episodeId, updateShows);
-		});
+		});		
+
+		if (app.options.rate) {
+			elementLi.querySelector('.shows-rate').style.display = 'inline-block';
+			elementLi.querySelector('.shows-rate').addEventListener('change', function(val) {
+				showLoading();
+				app.rateEpisode(lastEpisode.episodeId, this.value, updateShows);
+			});
+		}
+
 		if (new Date() - app.getEpisodeDate(show.unwatchedEpisodesData[0].airDate) < 86400000) {
 			elementLi.className = 'shows-recent';
 		}
@@ -130,6 +133,17 @@ function fillPattern(pattern, data, parent) {
   pattern = pattern.replace(/{{.*?}}/g, '');
 
   return pattern;
+};
+
+function showView(viewName) {
+	var views = ['loginView', 'showsView'];
+	views.forEach(function(view) {
+		if (view == viewName) {
+			document.getElementById(view).style.display = 'block';
+		} else {
+			document.getElementById(view).style.display = 'none';
+		}
+	})
 };
 
 function showLoading() {

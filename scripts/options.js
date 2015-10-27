@@ -4,6 +4,7 @@ function saveOptions(e) {
 	chrome.storage.sync.set({
 		notification: form.elements['notification'].checked,
 		badge: form.elements['badge'].checked,
+		rate: form.elements['rate'].checked,
 		resources: function() {
 			var resources = [];
 			for (var i in form.elements['resources']) {
@@ -27,6 +28,7 @@ function restoreOptions() {
 	app.getOptions(function(options) {
 		form.elements['notification'].checked = options.notification;
 		form.elements['badge'].checked = options.badge;
+		form.elements['rate'].checked = options.rate;
 
 
 		for (var i in form.elements['resources']) {

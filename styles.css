@@ -111,11 +111,24 @@ body, html {
 	top: 0;
 	margin: 0.5em 0;
 }
+.shows-control:hover {
+	cursor: default;
+}
 
 .shows-check {
 	visibility: hidden;
 	opacity: 0;	
 }
+
+.shows-rate {
+	border: 0;
+	background: none;
+	-webkit-appearance: none;
+}
+.shows-rate:hover {
+	cursor: pointer;
+}
+
 .shows-list > li:hover .shows-check {
 	visibility: visible;
 	opacity: 0.3;	
@@ -127,10 +140,14 @@ body, html {
 	cursor: pointer;
 }
 .shows-episode {
-	display: none;
-}
-.shows-check:hover .shows-episode {
+	visibility: hidden;
+	opacity: 0;
 	display: inline-block;
+}
+.shows-control:hover .shows-episode {
+	visibility: visible;
+	opacity: 0.6;	
+	transition: all 0.2s ease;	
 }
 
 .shows-badge {
