@@ -81,6 +81,7 @@ function buildUnwatchedList() {
 				id: show.showId,
 				seasonNum: app.numFormat(lastEpisode.seasonNumber),
 				episodeNum: app.numFormat(lastEpisode.episodeNumber),
+				episodeTitle: lastEpisode.title,
 				resources: app.getAllowedResources(app.options.resources)
 			};
 		elementLi.innerHTML = fillPattern(listPattern, dataPattern);
