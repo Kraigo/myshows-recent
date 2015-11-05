@@ -1,4 +1,5 @@
-setInterval(function() {
+function checkNewEpisodes() {
+	// chrome.notifications.create(null, {type:'basic', title: 'Background', message: 'Starting check new episodes', iconUrl: 'images/icon-128.png'}, function () {});
 	if (!app.isAuthorized()) return;
 
 	app.unwatched(function(unwatched) {
@@ -12,7 +13,9 @@ setInterval(function() {
 		app.updateBadge(app.getUnwatchedShows().length);			
 		
 	})
-}, 2700000);
+
+	setTimeout(checkNewEpisodes, 2700000)
+}
 
 function getNewEpisodes(unwatched) {
 	var newEpisodes = [];
@@ -42,7 +45,7 @@ function createNotification(newEpisodes) {
 			var title = 'Новый эпизод';
 			var image = show.image;
 
-			app.notification('image', title, message, image);		
+			app.notification('image', title, message, image);
 
 		} else {
 
@@ -67,3 +70,8 @@ function createNotification(newEpisodes) {
 	});
 
 };
+
+
+// # # #
+
+checkNewEpisodes();
