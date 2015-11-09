@@ -21,9 +21,13 @@ var app = {
 			if (xhr.readyState == 4) {
 				if (!xhr.status) return;
 
-				if (xhr.status == 401 && app.isAuthorized()) {
-					app.login();
-					app.get(method, callback);
+				if (xhr.status == 401) {
+					app.isAuthorized(function(auth) {
+						if (auth) {					
+							app.login(auth.login, auth.password);
+							app.get(method, callback);
+						}
+					})
 				} else if (xhr.status == 403) {
 					app.logout();
 				}
@@ -35,16 +39,12 @@ var app = {
 		xhr.send( null );
 	},
 	login: function(login, password, callback) {
-		if (!login && !password) {
-			var auth = this.localGet('auth');
-			login = auth.login;
-			password = auth.password;
-		}
 		this.get('profile/login?login=' + login + '&password=' + password, callback);
 	},
 	logout: function() {
 		localStorage.clear();
 		app.updateBadge('');
+		chrome.storage.sync.remove('auth');
 	},
 	profile: function() {
 		this.get('profile');
@@ -64,8 +64,21 @@ var app = {
 	rateEpisode: function(episodeId, rate, callback) {
 		this.get('profile/episodes/rate/' + rate + '/' + episodeId, callback)
 	},
-	isAuthorized: function() {
-		return localStorage['auth'] != undefined;
+	isAuthorized: function(callback) {
+
+		// Auth soft migration
+		// ---
+		if (app.localGet('auth')) {			
+			app.setOptions({auth: app.localGet('auth')});
+			localStorage.removeItem('auth');
+			callback(true);
+			return;
+		}
+		// ---
+
+		chrome.storage.sync.get({auth: false}, function(options) {
+			callback(options.auth);
+		});
 	},
 	localSave: function(key, data) {
 		localStorage[key] = JSON.stringify(data);
@@ -94,6 +107,9 @@ var app = {
 			rate: false,
 			resources: ['fsto']
 		}, callback);
+	},
+	setOptions: function(options, callback){
+		chrome.storage.sync.set(options, callback);
 	},
 	getUnwatchedShows: function(shows, unwatched) {
 		shows = shows || app.localGet('shows');

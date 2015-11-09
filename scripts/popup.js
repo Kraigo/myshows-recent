@@ -6,17 +6,19 @@ function init(chromeOptions) {
 		showView('loginView');
 	});
 	authForm.addEventListener('submit', authorize);
-	if (app.isAuthorized()) {
-		showView('showsView');
-	
-		if (app.localGet('shows') && app.localGet('unwatched')) {
-			buildUnwatchedList();
+	app.isAuthorized(function(auth) {
+		if (auth) {
+			showView('showsView');
+		
+			if (app.localGet('shows') && app.localGet('unwatched')) {
+				buildUnwatchedList();
+			} else {
+				updateShows();
+			}
 		} else {
-			updateShows();
+			showView('loginView');
 		}
-	} else {
-		showView('loginView');
-	}
+	})
 };
 
 function authorize(e) {
@@ -30,9 +32,10 @@ function authorize(e) {
 	app.login(login, password, function(data, status) {
 		hideLoading();
 		if (status == 200) {
-			app.localSave('auth', {login: login, password: password});
-			showView('showsView');
-			updateShows();
+			app.setOptions({auth: {login: login, password: password}}, function() {
+				showView('showsView');
+				updateShows();
+			})
 		} else if (status == 403) {
 			document.getElementById('loginMessage').style.display = 'block';
 			document.getElementById('loginMessage').innerHTML = 'Неверный логин или пароль'
@@ -80,6 +83,7 @@ function buildUnwatchedList() {
 				badge: show.unwatchedEpisodesData.length,
 				id: show.showId,
 				seasonNum: app.numFormat(lastEpisode.seasonNumber),
+				episodeId: lastEpisode.episodeId,
 				episodeNum: app.numFormat(lastEpisode.episodeNumber),
 				episodeTitle: lastEpisode.title,
 				resources: app.getAllowedResources(app.options.resources)
@@ -98,7 +102,7 @@ function buildUnwatchedList() {
 			});
 		}
 
-		if (new Date() - app.getEpisodeDate(show.unwatchedEpisodesData[0].airDate) < 86400000) {
+		if (new Date() - app.getEpisodeDate(show.unwatchedEpisodesData[0].airDate) < 86400000*2) {
 			elementLi.className = 'shows-recent';
 		}
 		unwatchedList.appendChild(elementLi);

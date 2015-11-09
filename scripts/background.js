@@ -1,18 +1,19 @@
 function checkNewEpisodes() {
-	// chrome.notifications.create(null, {type:'basic', title: 'Background', message: 'Starting check new episodes', iconUrl: 'images/icon-128.png'}, function () {});
-	if (!app.isAuthorized()) return;
+	//chrome.notifications.create(null, {type:'basic', title: 'Background', message: 'Starting check new episodes', iconUrl: 'images/icon-128.png'}, function () {});
 
-	app.unwatched(function(unwatched) {
+	app.isAuthorized(function(auth) {
+		if (auth) {
+			app.unwatched(function(unwatched) {
+				if (!unwatched) return;
 
-		if (!unwatched) return;
+				var newEpisodes = getNewEpisodes(unwatched);
+				if (newEpisodes.length) createNotification(newEpisodes);
 
-		var newEpisodes = getNewEpisodes(unwatched);
-		if (newEpisodes.length) createNotification(newEpisodes);
-
-		app.localSave('unwatched', unwatched);
-		app.updateBadge(app.getUnwatchedShows().length);			
-		
-	})
+				app.localSave('unwatched', unwatched);
+				app.updateBadge(app.getUnwatchedShows().length);
+			})
+		}
+	});
 
 	setTimeout(checkNewEpisodes, 2700000)
 }

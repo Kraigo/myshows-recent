@@ -143,6 +143,8 @@ body, html {
 	visibility: hidden;
 	opacity: 0;
 	display: inline-block;
+	color: inherit;
+	text-decoration: none;
 }
 .shows-control:hover .shows-episode {
 	visibility: visible;
