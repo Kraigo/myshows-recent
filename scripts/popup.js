@@ -5,7 +5,7 @@ function init(chromeOptions) {
 		app.logout();
 		showView('loginView');
 	});
-	document.getElementById('authFormSubmit').addEventListener('click', authorize);
+	document.getElementById('authForm').addEventListener('submit', authorize);
 	app.isAuthorized(function(auth) {
 		if (auth) {
 			showView('showsView');
