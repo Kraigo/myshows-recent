@@ -5,7 +5,7 @@ function init(chromeOptions) {
 		app.logout();
 		showView('loginView');
 	});
-	authForm.addEventListener('submit', authorize);
+	document.getElementById('authFormSubmit').addEventListener('click', authorize);
 	app.isAuthorized(function(auth) {
 		if (auth) {
 			showView('showsView');
@@ -22,6 +22,7 @@ function init(chromeOptions) {
 };
 
 function authorize(e) {
+	console.log(e);
 	e.preventDefault();
 	showLoading();
 	document.getElementById('loginMessage').style.display = 'none';
