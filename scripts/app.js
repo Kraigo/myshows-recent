@@ -93,9 +93,9 @@ var app = {
 		num = num.toString();
 		this.getOptions(function(options) {
 			if (options.badge)
-				chrome.browserAction.setBadgeText({text: num})
+				chrome.browserAction.setBadgeText({text: num});
 			else {
-				chrome.browserAction.setBadgeText({text: ''})
+				chrome.browserAction.setBadgeText({text: ''});
 			}
 		});
 		

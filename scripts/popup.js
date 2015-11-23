@@ -19,7 +19,7 @@ function init(chromeOptions) {
 			showView('loginView');
 		}
 	})
-};
+}
 
 function authorize(e) {
 	console.log(e);
@@ -42,7 +42,7 @@ function authorize(e) {
 			document.getElementById('loginMessage').innerHTML = 'Неверный логин или пароль'
 		}
 	});
-};
+}
 
 function updateShows() {
 	showLoading();
@@ -58,17 +58,16 @@ function updateShows() {
 			buildUnwatchedList();
 		});
 	});
-};
+}
 
 function buildUnwatchedList() {
 	var unwatchedShows = app.getUnwatchedShows();
 
 	unwatchedShows.sort(function(a,b) {
-		
 		a = app.getEpisodeDate(a.unwatchedEpisodesData[0].airDate);
 		b = app.getEpisodeDate(b.unwatchedEpisodesData[0].airDate);
 		return b - a;
-	})
+	});
 	
 	var listPattern = document.getElementById('shows-list-tmp').innerHTML;
 	var unwatchedList = document.getElementById('unwatchedList');
@@ -107,10 +106,9 @@ function buildUnwatchedList() {
 			elementLi.className = 'shows-recent';
 		}
 		unwatchedList.appendChild(elementLi);
+	});
 
-	})
-
-};
+}
 
 function fillPattern(pattern, data, parent) {
   parent = parent ? parent + '.' : '';
@@ -122,11 +120,6 @@ function fillPattern(pattern, data, parent) {
       var loopResult = '';
       for (var item in dataItem) {
           var loopData = dataItem[item];
-          if (typeof loopData == 'string') {
-            var escapedKey = dataItem[item].replace(/\W/g, '');
-            loopData = {};
-            loopData[escapedKey] = [{}];
-          }
           loopResult += fillPattern(template, loopData, parent+key);        
       }
       pattern = pattern.replace(reg, loopResult);
@@ -139,7 +132,7 @@ function fillPattern(pattern, data, parent) {
   pattern = pattern.replace(/{{.*?}}/g, '');
 
   return pattern;
-};
+}
 
 function showView(viewName) {
 	var views = ['loginView', 'showsView'];
@@ -150,18 +143,14 @@ function showView(viewName) {
 			document.getElementById(view).style.display = 'none';
 		}
 	})
-};
+}
 
 function showLoading() {
 	document.getElementById('loading-bar').style.display = 'block';
-};
+}
 
 function hideLoading() {
 	document.getElementById('loading-bar').style.display = 'none';
-};
-
-function numFormat(num) {
-	(lastEpisode.seasonNumber.toString().length == 1) ? '0' + lastEpisode.seasonNumber : lastEpisode.seasonNumber
 }
 
 app.getOptions(init);

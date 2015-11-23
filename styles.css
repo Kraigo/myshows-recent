@@ -36,6 +36,13 @@ body, html {
 	text-align: right;
 }
 
+.separate-title {
+	font-size: 12px;
+	color: #888;
+	border-bottom: 1px solid #333;
+}
+/* Shows list */
+
 .shows-list {
 	padding: 0 10px;
 	margin: 0 -10px;
@@ -143,12 +150,12 @@ body, html {
 	visibility: hidden;
 	opacity: 0;
 	display: inline-block;
-	color: inherit;
+	color: #888;
 	text-decoration: none;
 }
-.shows-control:hover .shows-episode {
+.shows-list > li:hover .shows-episode {
 	visibility: visible;
-	opacity: 0.6;	
+	opacity: 1;	
 	transition: all 0.2s ease;	
 }
 
