@@ -5,7 +5,15 @@ function init(chromeOptions) {
 		app.logout();
 		showView('loginView');
 	});
-	document.getElementById('authForm').addEventListener('submit', authorize);
+
+	document.getElementById('authForm').addEventListener('keyup', function(e) {
+		if (e.which == 13) {
+			e.preventDefault();
+			authorize();
+		}
+	});
+	document.getElementById('authFormSubmit').addEventListener('click', authorize);
+	
 	app.isAuthorized(function(auth) {
 		if (auth) {
 			showView('showsView');
@@ -21,9 +29,7 @@ function init(chromeOptions) {
 	})
 }
 
-function authorize(e) {
-	console.log(e);
-	e.preventDefault();
+function authorize() {
 	showLoading();
 	document.getElementById('loginMessage').style.display = 'none';
 
@@ -39,7 +45,10 @@ function authorize(e) {
 			})
 		} else if (status == 403) {
 			document.getElementById('loginMessage').style.display = 'block';
-			document.getElementById('loginMessage').innerHTML = 'Неверный логин или пароль'
+			document.getElementById('loginMessage').innerHTML = 'Неверный логин или пароль';
+		} else if (status == 404) {
+			document.getElementById('loginMessage').style.display = 'block';
+			document.getElementById('loginMessage').innerHTML = 'Заполните все поля';
 		}
 	});
 }
