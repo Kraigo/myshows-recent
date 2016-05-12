@@ -16,7 +16,10 @@ function init(chromeOptions) {
 	
 	app.isAuthorized(function(auth) {
 		if (auth) {
-			showView('showsView');
+			
+			document.getElementById('profileLink').setAttribute("href", 'https://myshows.me/' + auth.login);
+
+			showView('showsView');		
 		
 			if (app.localGet('shows') && app.localGet('unwatched')) {
 				buildUnwatchedList();

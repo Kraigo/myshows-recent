@@ -9,7 +9,8 @@ var app = {
 		kickassto: 'https://kat.cr/usearch/',
 		hdrezkame: 'http://hdrezka.me/index.php?do=search&subaction=search&q=',
 		seasonvarru: 'http://seasonvar.ru/search?x=0&y=0&q=',
-		kinozaltv: 'http://kinozal.tv/browse.php?s='
+		kinozaltv: 'http://kinozal.tv/browse.php?s=',
+		zserialstv: 'http://zserials.tv/poisk-serialov?searchid=1917918&web=0&text='
 	},
 	options: null,
 
