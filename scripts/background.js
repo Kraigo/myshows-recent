@@ -1,74 +1,74 @@
 function checkNewEpisodes() {
-	//chrome.notifications.create(null, {type:'basic', title: 'Background', message: 'Starting check new episodes', iconUrl: 'images/icon-128.png'}, function () {});
+    //chrome.notifications.create(null, {type:'basic', title: 'Background', message: 'Starting check new episodes', iconUrl: 'images/icon-128.png'}, function () {});
 
-	app.isAuthorized(function(auth) {
-		if (auth) {
-			app.unwatched(function(unwatched) {
-				if (!unwatched) return;
+    app.isAuthorized(function(auth) {
+        if (auth) {
+            app.unwatched(function(unwatched) {
+                if (!unwatched) return;
 
-				var newEpisodes = getNewEpisodes(unwatched);
-				if (newEpisodes.length) createNotification(newEpisodes);
+                var newEpisodes = getNewEpisodes(unwatched);
+                if (newEpisodes.length) createNotification(newEpisodes);
 
-				app.localSave('unwatched', unwatched);
-				app.updateBadge(app.getUnwatchedShows().length);
-			})
-		}
-	});
+                app.localSave('unwatched', unwatched);
+                app.updateBadge(app.getUnwatchedShows().length);
+            })
+        }
+    });
 
-	setTimeout(checkNewEpisodes, 2700000)
+    setTimeout(checkNewEpisodes, 2700000)
 }
 
 function getNewEpisodes(unwatched) {
-	var newEpisodes = [];
-	var localUnwatched = app.localGet('unwatched');
-	for (var i in unwatched) {
-		var matched = false;
-		for (var j in localUnwatched) {
-			if (unwatched[i].episodeId == localUnwatched[j].episodeId) {
-				matched = true;
-				break;
-			}
-		}
-		if (!matched) {
-			newEpisodes.push(unwatched[i]);
-		}
-	}
-	return newEpisodes;
+    var newEpisodes = [];
+    var localUnwatched = app.localGet('unwatched');
+    for (var i in unwatched) {
+        var matched = false;
+        for (var j in localUnwatched) {
+            if (unwatched[i].episodeId == localUnwatched[j].episodeId) {
+                matched = true;
+                break;
+            }
+        }
+        if (!matched) {
+            newEpisodes.push(unwatched[i]);
+        }
+    }
+    return newEpisodes;
 }
 
 function createNotification(newEpisodes) {
-	app.shows(function(shows){
-		if (newEpisodes.length == 1) {
+    app.shows(function(shows) {
+        if (newEpisodes.length == 1) {
 
-			var episode = newEpisodes[0]
-			var show = shows[episode.showId];
-			var message = (show.ruTitle || show.title) + '\n' + 's' + app.numFormat(episode.seasonNumber) + 'e' + app.numFormat(episode.episodeNumber) + ' ' + episode.title;
-			var title = 'Новый эпизод';
-			var image = show.image;
+            var episode = newEpisodes[0]
+            var show = shows[episode.showId];
+            var message = (show.ruTitle || show.title) + '\n' + 's' + app.numFormat(episode.seasonNumber) + 'e' + app.numFormat(episode.episodeNumber) + ' ' + episode.title;
+            var title = 'Новый эпизод';
+            var image = show.image;
 
-			app.notification('image', title, message, image);
+            app.notification('image', title, message, image);
 
-		} else {
+        } else {
 
-			var items = [];
+            var items = [];
 
-			for (var i in newEpisodes) {
-				var episode = newEpisodes[i];
-				var show = shows[episode.showId];
-				items.push({
-					title: (show.ruTitle || show.title),
-					message: 's' + app.numFormat(episode.seasonNumber) + 'e' + app.numFormat(episode.episodeNumber) + ' ' + episode.title
-				});
-			}
+            for (var i in newEpisodes) {
+                var episode = newEpisodes[i];
+                var show = shows[episode.showId];
+                items.push({
+                    title: (show.ruTitle || show.title),
+                    message: 's' + app.numFormat(episode.seasonNumber) + 'e' + app.numFormat(episode.episodeNumber) + ' ' + episode.title
+                });
+            }
 
-			var title = 'Новый эпизод ('+items.length+')';
+            var title = 'Новый эпизод (' + items.length + ')';
 
-			app.notification('list', title, items);
-		}
+            app.notification('list', title, items);
+        }
 
-		app.localSave('shows', shows);
+        app.localSave('shows', shows);
 
-	});
+    });
 
 };
 
@@ -78,5 +78,5 @@ function createNotification(newEpisodes) {
 checkNewEpisodes();
 
 chrome.runtime.onMessage.addListener(function(msg) {
-	console.log(msg);
+    console.log(msg);
 });

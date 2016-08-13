@@ -369,7 +369,7 @@ h4 {
 
 .options-list input[type=text] {
     display: block;
-	width: 100%;
+    width: 100%;
 }
 
 .options-status {
@@ -384,6 +384,7 @@ h4 {
     margin: 0 auto;
     background-color: #fff;
 }
+
 .options-error {
     color: #ff0000;
 }
