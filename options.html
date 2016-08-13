@@ -1,99 +1,133 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="UTF-8">
-  <title>MyShows Recent</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <title>MyShows Recent</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body bgcolor="#eeeeee">
-  <div class="container container-options ">
-    <form name="form">
+    <div class="container container-options ">
+        <form name="form">
 
-      <h4>Основные настройки</h4>
+            <h4>Основные настройки</h4>
 
-      <ul class="options-list">
-        <li>
-          <label>
-            <input type="checkbox" name="notification"> Оповещать о новых эпизодах
-          </label>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" name="badge"> Отображать количество новых сериалов
-          </label>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" name="rate"> Оценивать просмотренные эпизоды
-          </label>
-        </li>
-      </ul>
+            <ul class="options-list">
+                <li>
+                    <label>
+						<input type="checkbox" name="notification"> Оповещать о новых эпизодах
+					</label>
+                </li>
+                <li>
+                    <label>
+						<input type="checkbox" name="badge"> Отображать количество новых сериалов
+					</label>
+                </li>
+                <li>
+                    <label>
+						<input type="checkbox" name="rate"> Оценивать просмотренные эпизоды
+					</label>
+                </li>
+            </ul>
 
-      <h4>На каких ресурсах вы смотрите сериалы?</h4>
+            <h4>На каких ресурсах вы смотрите сериалы?</h4>
 
-      <ul class="options-list">
-        <li>
-          <label>
-            <input type="checkbox" name="resources" value="fsto"> fs.to
-          </label>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" name="resources" value="exua"> ex.ua
-          </label>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" name="resources" value="rutrackerorg"> rutracker.org
-          </label>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" name="resources" value="nnmclubme"> nnm-club.me
-          </label>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" name="resources" value="rutororg"> rutor.org
-          </label>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" name="resources" value="kickassto"> kickass.to
-          </label>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" name="resources" value="hdrezkame"> hdrezka.me
-          </label>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" name="resources" value="seasonvarru"> seasonvar.ru
-          </label>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" name="resources" value="kinozaltv"> kinozal.tv
-          </label>
-        </li>
-        <li>
-          <label>
-            <input type="checkbox" name="resources" value="zserialstv"> zserials.tv
-          </label>
-        </li>
-      </ul>
+            <ul class="options-list">
+                <li>
+                    <label>
+						<input type="checkbox" name="resources" value="fsto"> fs.to
+					</label>
+                </li>
+                <li>
+                    <label>
+						<input type="checkbox" name="resources" value="exua"> ex.ua
+					</label>
+                </li>
+                <li>
+                    <label>
+						<input type="checkbox" name="resources" value="rutrackerorg"> rutracker.org
+					</label>
+                </li>
+                <li>
+                    <label>
+						<input type="checkbox" name="resources" value="nnmclubme"> nnm-club.me
+					</label>
+                </li>
+                <li>
+                    <label>
+						<input type="checkbox" name="resources" value="rutororg"> rutor.org
+					</label>
+                </li>
+                <li>
+                    <label>
+						<input type="checkbox" name="resources" value="kickassto"> kickass.to
+					</label>
+                </li>
+                <li>
+                    <label>
+						<input type="checkbox" name="resources" value="hdrezkame"> hdrezka.me
+					</label>
+                </li>
+                <li>
+                    <label>
+						<input type="checkbox" name="resources" value="seasonvarru"> seasonvar.ru
+					</label>
+                </li>
+                <li>
+                    <label>
+						<input type="checkbox" name="resources" value="kinozaltv"> kinozal.tv
+					</label>
+                </li>
+                <li>
+                    <label>
+						<input type="checkbox" name="resources" value="zserialstv"> zserials.tv
+					</label>
+                </li>
+            </ul>
 
-      <p class="text-right">
-        <span id="status" class="options-status">Настройки сохранены</span>
-        <input type="submit" value="Сохранить" /></input>
-      </p>
+            <h4>Свои ресурсы</h4>
+            <ul class="options-list">
+                <li>
 
-    </form>
 
-  </div>
+                    <button id="custom-add" type="button">Добавить свой ресурс</button>
+                </li>
+            </ul>
 
-  <script type="text/javascript" src="scripts/app.js"></script>  
-  <script type="text/javascript" src="scripts/options.js"></script>
+            <div id="custom-fields" style="display: none">
+                <ul class="options-list">
+                    <li>
+                        <label>
+							Название:
+						</label>
+                        <input type="text" />
+                    </li>
+
+                    <li>
+                        <label>Адрес поиска:</label>
+                        <input type="text" />
+                    </li>
+                    <li>
+                        <button id="custom-cancel" type="button">Отмена</button>
+                        <button id="custom-save" type="button">Добавить</button>
+                    </li>
+                </ul>
+            </div>
+
+            <hr>
+
+            <p class="text-right">
+                <span id="status" class="options-status">Настройки сохранены</span>
+                <input type="submit" value="Сохранить" /></input>
+            </p>
+
+        </form>
+
+    </div>
+
+    <script type="text/javascript" src="scripts/app.js"></script>
+    <script type="text/javascript" src="scripts/options.js"></script>
 </body>
+
 </html>
