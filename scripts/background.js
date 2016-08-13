@@ -76,3 +76,7 @@ function createNotification(newEpisodes) {
 // # # #
 
 checkNewEpisodes();
+
+chrome.runtime.onMessage.addListener(function(msg) {
+	console.log(msg);
+});

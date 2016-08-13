@@ -1,170 +1,193 @@
 var app = {
-	baseUrl: 'http://api.myshows.ru/',
-	resources: {
-		fsto: 'http://fs.to/video/serials/search.aspx?search=',
-		exua: 'http://www.ex.ua/search?s=',
-		rutrackerorg: 'http://rutracker.org/forum/search_cse.php?cx=014434608714260776013%3Aggcq1kovlga&cof=FORID%3A9&ie=utf-8&sa=%D0%9F%D0%BE%D0%B8%D1%81%D0%BA+%D0%B2+Google&q=',
-		rutororg: 'http://rutor.org/search/0/4/000/0/',
-		nnmclubme: 'http://nnm-club.me/?w=title&q=',
-		kickassto: 'https://kat.cr/usearch/',
-		hdrezkame: 'http://hdrezka.me/index.php?do=search&subaction=search&q=',
-		seasonvarru: 'http://seasonvar.ru/search?x=0&y=0&q=',
-		kinozaltv: 'http://kinozal.tv/browse.php?s=',
-		zserialstv: 'http://zserials.tv/poisk-serialov?searchid=1917918&web=0&text='
-	},
-	options: null,
+    baseUrl: 'http://api.myshows.ru/',
+    resources: {
+        fsto: 'http://fs.to/video/serials/search.aspx?search=',
+        exua: 'http://www.ex.ua/search?s=',
+        rutrackerorg: 'http://rutracker.org/forum/search_cse.php?cx=014434608714260776013%3Aggcq1kovlga&cof=FORID%3A9&ie=utf-8&sa=%D0%9F%D0%BE%D0%B8%D1%81%D0%BA+%D0%B2+Google&q=',
+        rutororg: 'http://rutor.org/search/0/4/000/0/',
+        nnmclubme: 'http://nnm-club.me/?w=title&q=',
+        kickassto: 'https://kat.cr/usearch/',
+        hdrezkame: 'http://hdrezka.me/index.php?do=search&subaction=search&q=',
+        seasonvarru: 'http://seasonvar.ru/search?x=0&y=0&q=',
+        kinozaltv: 'http://kinozal.tv/browse.php?s=',
+        zserialstv: 'http://zserials.tv/poisk-serialov?searchid=1917918&web=0&text='
+    },
+    options: null,
 
-	get: function(method, callback) {
-		var xhr = new XMLHttpRequest();
-		xhr.open( "GET", this.baseUrl + method, true );
-		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState == 4) {
-				if (!xhr.status) return;
+    get: function(method, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", this.baseUrl + method, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (!xhr.status) return;
 
-				if (xhr.status == 401) {
-					app.isAuthorized(function(auth) {
-						if (auth) {					
-							app.login(auth.login, auth.password);
-							app.get(method, callback);
-						}
-					})
-				} else if (xhr.status == 403) {
-					app.logout();
-				}
+                if (xhr.status == 401) {
+                    app.isAuthorized(function(auth) {
+                        if (auth) {
+                            app.login(auth.login, auth.password);
+                            app.get(method, callback);
+                        }
+                    })
+                } else if (xhr.status == 403) {
+                    app.logout();
+                }
 
-				var success = (xhr.responseText[0] == '{') ? JSON.parse(xhr.responseText) : null;
-				callback ? callback(success, xhr.status) : '';
-			}
-		}
-		xhr.send( null );
-	},
-	login: function(login, password, callback) {
-		this.get('profile/login?login=' + login + '&password=' + password, callback);
-	},
-	logout: function() {
-		localStorage.clear();
-		app.updateBadge('');
-		chrome.storage.sync.remove('auth');
-	},
-	profile: function() {
-		this.get('profile');
-	},
-	shows: function(callback) {
-		this.get('profile/shows/', callback);
-	},
-	unwatched: function(callback) {
-		this.get('profile/episodes/unwatched/', callback);
-	},
-	watched: function(callback) {
-		this.get('profile/episodes/next/', callback);
-	},
-	checkEpisode: function(episodeId, callback) {
-		this.get('profile/episodes/check/' + episodeId, callback);
-	},	
-	rateEpisode: function(episodeId, rate, callback) {
-		this.get('profile/episodes/rate/' + rate + '/' + episodeId, callback)
-	},
-	isAuthorized: function(callback) {
+                var success = (xhr.responseText[0] == '{') ? JSON.parse(xhr.responseText) : null;
+                callback ? callback(success, xhr.status) : '';
+            }
+        }
+        xhr.send(null);
+    },
+    login: function(login, password, callback) {
+        this.get('profile/login?login=' + login + '&password=' + password, callback);
+    },
+    logout: function() {
+        localStorage.clear();
+        app.updateBadge('');
+        chrome.storage.sync.remove('auth');
+    },
+    profile: function() {
+        this.get('profile');
+    },
+    shows: function(callback) {
+        this.get('profile/shows/', callback);
+    },
+    unwatched: function(callback) {
+        this.get('profile/episodes/unwatched/', callback);
+    },
+    watched: function(callback) {
+        this.get('profile/episodes/next/', callback);
+    },
+    checkEpisode: function(episodeId, callback) {
+        this.get('profile/episodes/check/' + episodeId, callback);
+    },
+    rateEpisode: function(episodeId, rate, callback) {
+        this.get('profile/episodes/rate/' + rate + '/' + episodeId, callback)
+    },
+    isAuthorized: function(callback) {
 
-		// Auth soft migration
-		// ---
-		if (app.localGet('auth')) {			
-			app.setOptions({auth: app.localGet('auth')});
-			localStorage.removeItem('auth');
-			callback(true);
-			return;
-		}
-		// ---
+        // Auth soft migration
+        // ---
+        if (app.localGet('auth')) {
+            app.setOptions({ auth: app.localGet('auth') });
+            localStorage.removeItem('auth');
+            callback(true);
+            return;
+        }
+        // ---
 
-		chrome.storage.sync.get({auth: false}, function(options) {
-			callback(options.auth);
-		});
-	},
-	localSave: function(key, data) {
-		localStorage[key] = JSON.stringify(data);
-	},
-	localGet: function(key) {
-		return localStorage[key] ? JSON.parse(localStorage[key]) : false;
-	},
-	numFormat: function(num) {
-		return (num.toString().length == 1) ? '0' + num : num;
-	},
-	updateBadge:function(num) {
-		num = num.toString();
-		this.getOptions(function(options) {
-			if (options.badge)
-				chrome.browserAction.setBadgeText({text: num});
-			else {
-				chrome.browserAction.setBadgeText({text: ''});
-			}
-		});
-		
-	},
-	getOptions: function(callback) {
-		chrome.storage.sync.get({
-			notification: true,
-			badge: true,
-			rate: false,
-			resources: ['fsto']
-		}, callback);
-	},
-	setOptions: function(options, callback){
-		chrome.storage.sync.set(options, callback);
-	},
-	getUnwatchedShows: function(shows, unwatched) {
-		shows = shows || app.localGet('shows');
-		unwatched = unwatched || app.localGet('unwatched');
-		var result = [];
+        chrome.storage.sync.get({ auth: false }, function(options) {
+            callback(options.auth);
+        });
+    },
+    localSave: function(key, data) {
+        localStorage[key] = JSON.stringify(data);
+    },
+    localGet: function(key) {
+        return localStorage[key] ? JSON.parse(localStorage[key]) : false;
+    },
+    numFormat: function(num) {
+        return (num.toString().length == 1) ? '0' + num : num;
+    },
+    updateBadge: function(num) {
+        num = num.toString();
+        this.getOptions(function(options) {
+            if (options.badge)
+                chrome.browserAction.setBadgeText({ text: num });
+            else {
+                chrome.browserAction.setBadgeText({ text: '' });
+            }
+        });
 
-		for(var i in unwatched) {
-			var episode = unwatched[i];
-			if (!shows[episode.showId].unwatchedEpisodesData) {
-				shows[episode.showId].unwatchedEpisodesData = [];
-			}
-			shows[episode.showId].unwatchedEpisodesData.unshift(episode);				
-		}
+    },
+    getOptions: function(callback) {
+        chrome.storage.sync.get({
+            notification: true,
+            badge: true,
+            rate: false,
+            resources: ['fsto']
+        }, callback);
+    },
+    setOptions: function(options, callback) {
+        chrome.storage.sync.set(options, callback);
+    },
+    getUnwatchedShows: function(shows, unwatched) {
+        shows = shows || app.localGet('shows');
+        unwatched = unwatched || app.localGet('unwatched');
+        var result = [];
 
-		for (var i in shows) {
-			var show = shows[i];
-			if (show.unwatchedEpisodesData && show.unwatchedEpisodesData.length > 0) {
-				result.push(show);
-			}
-		}
-		return result;
-	},
-	notification: function(type, title, body, image) {
-		app.getOptions(function(options) {
-			if (!options.notification) return;
-			var options = {
-				type: type,
-				title: title,
-				iconUrl: 'images/icon-128.png'			
-			};
+        for (var i in unwatched) {
+            var episode = unwatched[i];
+            if (!shows[episode.showId].unwatchedEpisodesData) {
+                shows[episode.showId].unwatchedEpisodesData = [];
+            }
+            shows[episode.showId].unwatchedEpisodesData.unshift(episode);
+        }
 
-			if (type == 'list') {
-				options.message = '';
-				options.items = body;
-			} else if (type == 'image') {
-				options.message = body;
-				options.imageUrl = image
-			}
-			
-			chrome.notifications.create(null, options, function () {});
+        for (var i in shows) {
+            var show = shows[i];
+            if (show.unwatchedEpisodesData && show.unwatchedEpisodesData.length > 0) {
+                result.push(show);
+            }
+        }
+        return result;
+    },
+    notification: function(type, title, body, image) {
+        app.getOptions(function(options) {
+            if (!options.notification) return;
+            var options = {
+                type: type,
+                title: title,
+                iconUrl: 'images/icon-128.png'
+            };
 
-		})
-	},
-	getAllowedResources: function(resources) {
-		var result = [];
-		for (var i in resources) {
-			var res = resources[i];
-			result.push({title: res, link: this.resources[res]});
-		}
-		return result;
-	},
-	getEpisodeDate: function(date) {
-		var res = date.match(/(\d{2})\.(\d{2})\.(\d{4})/);
-		return Date.parse(res[3]+'-'+res[2]+'-'+res[1]);
-	}
+            if (type == 'list') {
+                options.message = '';
+                options.items = body;
+            } else if (type == 'image') {
+                options.message = body;
+                options.imageUrl = image
+            }
+
+            chrome.notifications.create(null, options, function() {});
+
+        })
+    },
+    getAllowedResources: function(resources) {
+        var result = [];
+        for (var i in resources) {
+            var res = resources[i];
+            result.push({ title: res, link: this.resources[res] });
+        }
+        return result;
+    },
+    getEpisodeDate: function(date) {
+        var res = date.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+        return Date.parse(res[3] + '-' + res[2] + '-' + res[1]);
+    },
+    fillPattern: function(pattern, data, parent) {
+        parent = parent ? parent + '.' : '';
+        for (var key in data) {
+            var dataItem = data[key];
+            if (Array.isArray(dataItem)) {
+                var reg = new RegExp('{{' + parent + key + ':}}([\\s\\S]*){{:' + parent + key + '}}');
+                var template = pattern.match(reg)[1];
+                var loopResult = '';
+                for (var item in dataItem) {
+                    var loopData = dataItem[item];
+                    loopResult += this.fillPattern(template, loopData, parent + key);
+                }
+                pattern = pattern.replace(reg, loopResult);
+            } else {
+                var reg = RegExp('{{' + parent + key + '}}', 'g');
+                pattern = pattern.replace(reg, dataItem);
+            }
+        }
+        pattern = pattern.replace(/{{.*?:}}[\s\S]*?{{:.*?}}/g, '');
+        pattern = pattern.replace(/{{.*?}}/g, '');
+
+        return pattern;
+    }
 
 };

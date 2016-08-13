@@ -87,10 +87,11 @@
             </ul>
 
             <h4>Свои ресурсы</h4>
+
+            <ul class="options-list" id="custom-options">
+            </ul>
             <ul class="options-list">
                 <li>
-
-
                     <button id="custom-add" type="button">Добавить свой ресурс</button>
                 </li>
             </ul>
@@ -101,16 +102,20 @@
                         <label>
 							Название:
 						</label>
-                        <input type="text" />
+                        <input type="text" id="custom-title" />
                     </li>
 
                     <li>
                         <label>Адрес поиска:</label>
-                        <input type="text" />
+                        <input type="text" id="custom-link" placeholder="http://example.com?search=" />
+                    </li>
+                    <li>
+                        <small>Переход на ресур работает с помощью поиска на сайте. Для этого нужно скопировать ссылку поиска и убрать текущий критерий поиска.</small>
                     </li>
                     <li>
                         <button id="custom-cancel" type="button">Отмена</button>
                         <button id="custom-save" type="button">Добавить</button>
+                        <span id="custom-error" style="display: none" class="options-error">Невозможно сохранить</span>
                     </li>
                 </ul>
             </div>
@@ -125,6 +130,14 @@
         </form>
 
     </div>
+
+
+    <script type="text/html" id="options-list-tmp">
+        <label>
+                <input type="checkbox" name="resources" value="{{id}}" /> {{title}}<br> <small>{{link}}</small>
+			</label>
+    </script>
+
 
     <script type="text/javascript" src="scripts/app.js"></script>
     <script type="text/javascript" src="scripts/options.js"></script>

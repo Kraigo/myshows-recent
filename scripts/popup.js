@@ -100,7 +100,7 @@ function buildUnwatchedList() {
 				episodeTitle: lastEpisode.title,
 				resources: app.getAllowedResources(app.options.resources)
 			};
-		elementLi.innerHTML = fillPattern(listPattern, dataPattern);
+		elementLi.innerHTML = app.fillPattern(listPattern, dataPattern);
 		elementLi.querySelector('.shows-mark').addEventListener('click', function() {
 			showLoading();
 			app.checkEpisode(lastEpisode.episodeId, updateShows);
@@ -120,30 +120,6 @@ function buildUnwatchedList() {
 		unwatchedList.appendChild(elementLi);
 	});
 
-}
-
-function fillPattern(pattern, data, parent) {
-  parent = parent ? parent + '.' : '';
-  for(var key in data) {
-    var dataItem = data[key];
-    if (Array.isArray(dataItem)) {
-      var reg = new RegExp('{{'+parent+key+':}}([\\s\\S]*){{:'+parent+key+'}}');
-      var template = pattern.match(reg)[1];
-      var loopResult = '';
-      for (var item in dataItem) {
-          var loopData = dataItem[item];
-          loopResult += fillPattern(template, loopData, parent+key);        
-      }
-      pattern = pattern.replace(reg, loopResult);
-    } else {
-      var reg = RegExp('{{'+parent+key+'}}', 'g');
-      pattern = pattern.replace(reg, dataItem);
-    }
-  }
-  pattern = pattern.replace(/{{.*?:}}[\s\S]*?{{:.*?}}/g, '');
-  pattern = pattern.replace(/{{.*?}}/g, '');
-
-  return pattern;
 }
 
 function showView(viewName) {
