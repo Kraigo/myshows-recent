@@ -141,4 +141,16 @@ function hideLoading() {
 	document.getElementById('loading-bar').style.display = 'none';
 }
 
+function pinShows(id) {	
+	var pinIndex = app.options.pinned.indexOf(id);
+	if (pinIndex < 0) {
+		//savePin
+		app.options.pinned.push(id);
+	} else {
+		app.options.pinned.splice(pinIndex, 1);
+	}
+	
+	app.setOptions(app.options.pinned);
+}
+
 app.getOptions(init);

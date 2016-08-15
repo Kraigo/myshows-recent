@@ -95,7 +95,8 @@ var app = {
             badge: true,
             rate: false,
             resources: ['fsto'],
-            customResources: []
+            customResources: [],
+            pinned: []
         }, function(options) {
             app.options = options;
             callback(options);
