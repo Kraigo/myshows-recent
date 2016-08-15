@@ -188,10 +188,14 @@ var app = {
                 }
                 pattern = pattern.replace(reg, loopResult);
             } else {
+                var regIf = RegExp('{{' + parent + key + '!}}([\\s\\S]*){{!' + parent + key + '}}');
+                pattern = pattern.replace(regIf, '$1');
+
                 var reg = RegExp('{{' + parent + key + '}}', 'g');
                 pattern = pattern.replace(reg, dataItem);
             }
         }
+        pattern = pattern.replace(/{{.*?!}}[\s\S]*?{{!.*?}}/g, '');
         pattern = pattern.replace(/{{.*?:}}[\s\S]*?{{:.*?}}/g, '');
         pattern = pattern.replace(/{{.*?}}/g, '');
 

@@ -100,7 +100,7 @@ function customSave() {
         customResources.push({
             title: _customTitle.value,
             link: _customLink.value,
-            id: _customTitle.value.toLowerCase().replace(/[^\w]/g, ''),
+            id: 'ctm_' + _customTitle.value.toLowerCase().replace(/[^\w]/g, ''),
             domain: domain[1] ? domain[1] : ''
         });
         customCancel();

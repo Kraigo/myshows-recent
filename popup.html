@@ -63,7 +63,8 @@
         <div class="shows-resources">
             {{resources:}}
             <a href="{{resources.link}}{{title}}" target="_blank">
-                <span class="show-icon icon-{{resources.title}}"></span>
+                <span class="show-icon icon-{{resources.id}}" title="{{resources.title}}" {{resources.domain!}} style="background-image: url('https://www.google.com/s2/favicons?domain={{resources.domain}}')" {{!resources.domain}}>
+                </span>
             </a>
             {{:resources}}
         </div>
@@ -84,7 +85,7 @@
             <span class="shows-badge" title="Количество новых эпизодов">{{badge}}</span>
         </div>
     </script>
-	
+
     <script src="scripts/resources.js"></script>
     <script src="scripts/app.js"></script>
     <script src="scripts/popup.js"></script>
