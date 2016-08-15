@@ -33,8 +33,8 @@
 
             <h4>На каких ресурсах вы смотрите сериалы?</h4>
 
-            <ul class="options-list">
-                <li>
+            <ul class="options-list" id="options">
+                <!--<li>
                     <label>
 						<input type="checkbox" name="resources" value="fsto"> fs.to
 					</label>
@@ -83,7 +83,7 @@
                     <label>
 						<input type="checkbox" name="resources" value="zserialstv"> zserials.tv
 					</label>
-                </li>
+                </li>-->
             </ul>
 
             <h4>Свои ресурсы</h4>
@@ -134,11 +134,26 @@
 
     <script type="text/html" id="options-list-tmp">
         <label>
-                <input type="checkbox" name="resources" value="{{id}}" /> {{title}}<br> <small>{{link}}</small>
-			</label>
+            <input type="checkbox" name="resources" value="{{id}}" />
+            <span class="options-title">{{title}}</span><br>
+		</label>
+    </script>
+
+    <script type="text/html" id="custom-options-list-tmp">
+        <label>
+            <input type="checkbox" name="resources" value="{{id}}" />
+            <!--<img src="https://www.google.com/s2/favicons?domain={{domain}}" height="14px" width="14px" class="options-favicon" />-->
+            <span class="options-title">{{title}}</span><br>
+            <small>{{link}}</small>
+		</label>
+        <div class="options-list-control">
+            <button class="custom-delete">Удалить</button>
+        </div>
     </script>
 
 
+
+    <script type="text/javascript" src="scripts/resources.js"></script>
     <script type="text/javascript" src="scripts/app.js"></script>
     <script type="text/javascript" src="scripts/options.js"></script>
 </body>

@@ -1,17 +1,5 @@
 var app = {
     baseUrl: 'http://api.myshows.ru/',
-    resources: {
-        fsto: 'http://fs.to/video/serials/search.aspx?search=',
-        exua: 'http://www.ex.ua/search?s=',
-        rutrackerorg: 'http://rutracker.org/forum/search_cse.php?cx=014434608714260776013%3Aggcq1kovlga&cof=FORID%3A9&ie=utf-8&sa=%D0%9F%D0%BE%D0%B8%D1%81%D0%BA+%D0%B2+Google&q=',
-        rutororg: 'http://rutor.org/search/0/4/000/0/',
-        nnmclubme: 'http://nnm-club.me/?w=title&q=',
-        kickassto: 'https://kat.cr/usearch/',
-        hdrezkame: 'http://hdrezka.me/index.php?do=search&subaction=search&q=',
-        seasonvarru: 'http://seasonvar.ru/search?x=0&y=0&q=',
-        kinozaltv: 'http://kinozal.tv/browse.php?s=',
-        zserialstv: 'http://zserials.tv/poisk-serialov?searchid=1917918&web=0&text='
-    },
     options: null,
 
     get: function(method, callback) {
@@ -106,8 +94,12 @@ var app = {
             notification: true,
             badge: true,
             rate: false,
-            resources: ['fsto']
-        }, callback);
+            resources: ['fsto'],
+            customResources: []
+        }, function(options) {
+            app.options = options;
+            callback(options);
+        });
     },
     setOptions: function(options, callback) {
         chrome.storage.sync.set(options, callback);
@@ -154,11 +146,27 @@ var app = {
 
         })
     },
-    getAllowedResources: function(resources) {
+    getAllowedResources: function(allowedRes) {
         var result = [];
-        for (var i in resources) {
-            var res = resources[i];
-            result.push({ title: res, link: this.resources[res] });
+        var customResources = this.options.customResources;
+
+        for (var i = 0; i < allowedRes.length; i++) {
+            var res = allowedRes[i];
+
+            for (var r = 0; r < $resources.length; r++) {
+                if ($resources[r].id === res) {
+                    result.push($resources[r]);
+                    break;
+                }
+            }
+
+            // Custom Resources
+            for (var r = 0; r < customResources.length; r++) {
+                if (customResources[r].id === res) {
+                    result.push(customResources[r]);
+                    break;
+                }
+            }
         }
         return result;
     },

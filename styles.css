@@ -199,6 +199,7 @@ html {
 
 .show-icon {
     background-image: url(images/shows.png);
+    background-position: 0 0;
 }
 
 .icon-fsto {
@@ -357,6 +358,7 @@ h4 {
 
 .options-list li {
     margin: 5px 0;
+    position: relative;
 }
 
 .options-list label {
@@ -365,11 +367,29 @@ h4 {
 
 .options-list input[type=checkbox] {
     vertical-align: bottom;
+    vertical-align: middle;
 }
 
 .options-list input[type=text] {
     display: block;
     width: 100%;
+}
+
+.options-list-control {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.options-list-control button {
+    border: 0;
+    background: none;
+    box-shadow: none;
+}
+
+.options-list li:hover .options-list-control {
+    display: block;
 }
 
 .options-status {
@@ -387,4 +407,12 @@ h4 {
 
 .options-error {
     color: #ff0000;
+}
+
+.options-title {
+    vertical-align: middle;
+}
+
+.options-favicon {
+    vertical-align: middle;
 }

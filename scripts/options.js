@@ -1,3 +1,5 @@
+var customResources = [];
+
 function saveOptions(e) {
     e.preventDefault();
 
@@ -14,13 +16,13 @@ function saveOptions(e) {
                 }
             }
             return resources;
-        }()
+        }(),
+        customResources: customResources
     }, function() {
         document.getElementById('status').style.opacity = 1;
         setTimeout(function() {
             document.getElementById('status').style.opacity = 0;
-        }, 1300)
-
+        }, 1300);
     });
 }
 
@@ -30,40 +32,52 @@ function restoreOptions() {
         form.elements['badge'].checked = options.badge;
         form.elements['rate'].checked = options.rate;
 
+        customResources = options.customResources;
 
-        for (var i in form.elements['resources']) {
-            var res = form.elements['resources'][i];
+        renderOptions();
+        renderCustomOptions();
 
-            if (options.resources.indexOf(res.value) >= 0) {
-                res.checked = true;
-            }
-        }
 
     });
 }
 
-var customOptions = [{
-    title: 'Custom 1',
-    id: '123',
-    link: 'http://custom1.link?s='
-}, {
-    title: 'Custom 2',
-    id: '456',
-    link: 'http://custom2.link?s='
-}];
+function fillOptionsValue() {
+    for (var i in form.elements['resources']) {
+        var res = form.elements['resources'][i];
+        res.checked = app.options.resources.indexOf(res.value) >= 0;
+    }
+}
+
+function renderOptions() {
+    var optionsPattern = document.getElementById('options-list-tmp').innerHTML;
+    var optionsList = document.getElementById('options');
+    optionsList.innerHTML = '';
+
+    $resources.forEach(function(item) {
+        var elementLi = document.createElement('li');
+        elementLi.innerHTML = app.fillPattern(optionsPattern, item);
+        optionsList.appendChild(elementLi);
+    });
+    fillOptionsValue();
+}
 
 function renderCustomOptions() {
-    var optionsPattern = document.getElementById('options-list-tmp').innerHTML;
+    var customOptionsPattern = document.getElementById('custom-options-list-tmp').innerHTML;
     var customOptionsList = document.getElementById('custom-options');
     customOptionsList.innerHTML = '';
 
-    customOptions.forEach(function(item) {
+    customResources.forEach(function(item) {
         var elementLi = document.createElement('li');
-        elementLi.innerHTML = app.fillPattern(optionsPattern, item);
+        elementLi.innerHTML = app.fillPattern(customOptionsPattern, item);
+        elementLi.querySelector('.custom-delete').addEventListener('click', function() {
+            customRemove(item.id);
+        });
+
         customOptionsList.appendChild(elementLi);
     });
+
+    fillOptionsValue();
 }
-renderCustomOptions();
 
 function customAdd() {
     _customAdd.style.display = 'none';
@@ -80,18 +94,30 @@ function customCancel() {
 
 function customSave() {
     _customError.style.display = 'none';
+    var domain = _customLink.value.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im)
 
     if (_customTitle.value && _customLink.value) {
-        customOptions.push({
+        customResources.push({
             title: _customTitle.value,
             link: _customLink.value,
-            id: _customTitle.value.toLowerCase().replace(/[^\w]/g, '')
+            id: _customTitle.value.toLowerCase().replace(/[^\w]/g, ''),
+            domain: domain[1] ? domain[1] : ''
         });
         customCancel();
         renderCustomOptions();
     } else {
         _customError.style.display = '';
     }
+}
+
+function customRemove(id) {
+    for (var i = 0; i < customResources.length; i++) {
+        if (customResources[i].id === id) {
+            customResources.splice(i, 1);
+            break;
+        }
+    }
+    renderCustomOptions();
 }
 
 restoreOptions();

@@ -1,73 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta charset="UTF-8">
-	<title>MyShows Recent</title>
-	<link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <title>MyShows Recent</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-	<div class="loading-bar" id="loading-bar" style="display: none">
-		<div class="bar"></div>
-		<div class="bar"></div>
-		<div class="bar"></div>
-	</div>
+    <div class="loading-bar" id="loading-bar" style="display: none">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
 
-	<div class="view" id="loginView">
-		<div class="logo">
-			<a href="https://myshows.me/" target="_blank">
-				<img src="images/logo.png" height="27" width="123" alt="">
-			</a>
-		</div>
-		<form name="authForm" id="authForm">
-			<p>
-				<label>Логин или Email:</label>
-				<input type="text" class="input" name="login" autofocus>
-			</p>
-			<p>
-				<label>Пароль:</label>
-				<input type="password" class="input" name="password">
-			</p>
-			<p class="login-message" id="loginMessage"></p>
-			<p class="text-right">
-				<input type="button" value="Вход" class="button" id="authFormSubmit">
-			</p>
-		</form>
-	</div>
+    <div class="view" id="loginView">
+        <div class="logo">
+            <a href="https://myshows.me/" target="_blank">
+                <img src="images/logo.png" height="27" width="123" alt="">
+            </a>
+        </div>
+        <form name="authForm" id="authForm">
+            <p>
+                <label>Логин или Email:</label>
+                <input type="text" class="input" name="login" autofocus>
+            </p>
+            <p>
+                <label>Пароль:</label>
+                <input type="password" class="input" name="password">
+            </p>
+            <p class="login-message" id="loginMessage"></p>
+            <p class="text-right">
+                <input type="button" value="Вход" class="button" id="authFormSubmit">
+            </p>
+        </form>
+    </div>
 
 
-	<div class="view" id="showsView">
-		<div class="view-control">
-			<div class="view-control-right">
-				<span class="view-control-item" id="refreshBtn">Обновить</span> |
-				<span class="view-control-item" id="logoutBtn">Выйти</span>
-			</div>
-			<div class="view-logo">
-				<a href="http://myshows.me/" target="_blank" id="profileLink">
-					<img src="images/logo-16.png" height="16" width="73">
-				</a>
-			</div>			
-		</div>
-		<ul id="unwatchedList" class="shows-list"></ul><!-- 
+    <div class="view" id="showsView">
+        <div class="view-control">
+            <div class="view-control-right">
+                <span class="view-control-item" id="refreshBtn">Обновить</span> |
+                <span class="view-control-item" id="logoutBtn">Выйти</span>
+            </div>
+            <div class="view-logo">
+                <a href="http://myshows.me/" target="_blank" id="profileLink">
+                    <img src="images/logo-16.png" height="16" width="73">
+                </a>
+            </div>
+        </div>
+        <ul id="unwatchedList" class="shows-list"></ul>
+        <!-- 
 		<h5 class="separate-title">Последнее просмотренное</h5>
 		<ul id="lastCheckedList" class="shows-list"></ul> -->
-	</div>
+    </div>
 
-	<script type="text/html" id="shows-list-tmp">
-		<h2 class="shows-title">
+    <script type="text/html" id="shows-list-tmp">
+        <h2 class="shows-title">
 			<a href="http://myshows.me/view/{{id}}/" target="_blank">{{title}}</a>
 		</h2>
-		<div class="shows-resources">
-			{{resources:}}
-				<a href="{{resources.link}}{{title}}" target="_blank">
-					<span class="show-icon icon-{{resources.title}}"></span>
-				</a>
-			{{:resources}}
-		</div>
-		<div class="shows-control">
+        <div class="shows-resources">
+            {{resources:}}
+            <a href="{{resources.link}}{{title}}" target="_blank">
+                <span class="show-icon icon-{{resources.title}}"></span>
+            </a>
+            {{:resources}}
+        </div>
+        <div class="shows-control">
 
-			<a class="shows-episode" href="http://myshows.me/view/episode/{{episodeId}}/" title="{{episodeTitle}}" target="_blank">s{{seasonNum}}e{{episodeNum}}</a>
-			<span class="shows-check" title="Отметить как просмотренный">
+            <a class="shows-episode" href="http://myshows.me/view/episode/{{episodeId}}/" title="{{episodeTitle}}" target="_blank">s{{seasonNum}}e{{episodeNum}}</a>
+            <span class="shows-check" title="Отметить как просмотренный">
 				<select class="shows-rate" style="display: none">
 					<option value="" selected>★</option>
 					<option value="1">1</option>
@@ -77,13 +80,15 @@
 					<option value="5">5</option>
 				</select>
 				<span class="icon icon-eye shows-mark"></span>
-			</span>
-			<span class="shows-badge" title="Количество новых эпизодов">{{badge}}</span>
-		</div>
-	</script>
-
-	<script src="scripts/app.js"></script>
-	<script src="scripts/popup.js"></script>
-	<script src="scripts/md5.min.js"></script>
+            </span>
+            <span class="shows-badge" title="Количество новых эпизодов">{{badge}}</span>
+        </div>
+    </script>
+	
+    <script src="scripts/resources.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/popup.js"></script>
+    <script src="scripts/md5.min.js"></script>
 </body>
+
 </html>
