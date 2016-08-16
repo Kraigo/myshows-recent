@@ -1,3 +1,5 @@
+'use strict';
+
 function init(chromeOptions) {
     app.options = chromeOptions;
     document.getElementById('refreshBtn').addEventListener('click', updateShows);
@@ -76,18 +78,31 @@ function buildUnwatchedList() {
     var unwatchedShows = app.getUnwatchedShows();
 
     unwatchedShows.sort(function(a, b) {
-        a = app.getEpisodeDate(a.unwatchedEpisodesData[0].airDate);
-        b = app.getEpisodeDate(b.unwatchedEpisodesData[0].airDate);
-        return b - a;
+        var pinA, pinB;
+
+        var dateA = app.getEpisodeDate(a.unwatchedEpisodesData[0].airDate);
+        var dateB = app.getEpisodeDate(b.unwatchedEpisodesData[0].airDate);
+
+        if (app.options.pin) {
+            var pinA = app.getPinned(a.showId);
+            var pinB = app.getPinned(b.showId);
+
+            if (pinA && !pinB) {
+                return -1;
+            } else if (!pinA && pinB) {
+                return 1;
+            }
+        }
+        return dateB - dateA;
     });
 
-    if (app.options.pin) {
-        unwatchedShows.sort(function(a, b) {
-            a = app.getPinned(a.showId);
-            b = app.getPinned(b.showId);
-            return b - a;
-        });
-    }
+    // if (app.options.pin) {
+    //     for (var i = 0; i < unwatchedShows.length; i++) {
+    //         if (app.getPinned(unwatchedShows[i].showId)) {
+    //             unwatchedShows.splice(0, 0, unwatchedShows.splice(i, 1)[0]);
+    //         }
+    //     }
+    // }
 
     var listPattern = document.getElementById('shows-list-tmp').innerHTML;
     var unwatchedList = document.getElementById('unwatchedList');

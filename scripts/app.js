@@ -27,32 +27,41 @@ var app = {
         }
         xhr.send(null);
     },
+    
     login: function(login, password, callback) {
         this.get('profile/login?login=' + login + '&password=' + password, callback);
     },
+
     logout: function() {
         localStorage.clear();
         app.updateBadge('');
         chrome.storage.sync.remove('auth');
     },
+
     profile: function() {
         this.get('profile');
     },
+
     shows: function(callback) {
         this.get('profile/shows/', callback);
     },
+
     unwatched: function(callback) {
         this.get('profile/episodes/unwatched/', callback);
     },
+
     watched: function(callback) {
         this.get('profile/episodes/next/', callback);
     },
+
     checkEpisode: function(episodeId, callback) {
         this.get('profile/episodes/check/' + episodeId, callback);
     },
+    
     rateEpisode: function(episodeId, rate, callback) {
         this.get('profile/episodes/rate/' + rate + '/' + episodeId, callback)
     },
+
     isAuthorized: function(callback) {
 
         // Auth soft migration
@@ -69,15 +78,19 @@ var app = {
             callback(options.auth);
         });
     },
+
     localSave: function(key, data) {
         localStorage[key] = JSON.stringify(data);
     },
+
     localGet: function(key) {
         return localStorage[key] ? JSON.parse(localStorage[key]) : false;
     },
+
     numFormat: function(num) {
         return (num.toString().length == 1) ? '0' + num : num;
     },
+
     updateBadge: function(num) {
         num = num.toString();
         this.getOptions(function(options) {
@@ -89,6 +102,7 @@ var app = {
         });
 
     },
+
     getOptions: function(callback) {
         chrome.storage.sync.get({
             notification: true,
@@ -103,9 +117,11 @@ var app = {
             callback(options);
         });
     },
+
     setOptions: function(options, callback) {
         chrome.storage.sync.set(options, callback);
     },
+
     getUnwatchedShows: function(shows, unwatched) {
         shows = shows || app.localGet('shows');
         unwatched = unwatched || app.localGet('unwatched');
@@ -127,6 +143,7 @@ var app = {
         }
         return result;
     },
+
     notification: function(type, title, body, image) {
         app.getOptions(function(options) {
             if (!options.notification) return;
@@ -148,6 +165,7 @@ var app = {
 
         })
     },
+
     getAllowedResources: function(allowedRes) {
         var result = [];
         var customResources = this.options.customResources;
@@ -172,10 +190,12 @@ var app = {
         }
         return result;
     },
+
     getEpisodeDate: function(date) {
         var res = date.match(/(\d{2})\.(\d{2})\.(\d{4})/);
         return Date.parse(res[3] + '-' + res[2] + '-' + res[1]);
     },
+
     getPinned: function(showId) {
         return this.options.pin && this.options.pinned.indexOf(showId) >= 0;
     },
