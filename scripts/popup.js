@@ -82,11 +82,10 @@ function buildUnwatchedList() {
     });
 
     if (app.options.pin) {
-        unwatchedShows.forEach(function(show) {
-            show.pinned = app.options.pinned.indexOf(show.showId) >= 0;
-        })
         unwatchedShows.sort(function(a, b) {
-            return (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0);
+            a = app.getPinned(a.showId);
+            b = app.getPinned(b.showId);
+            return b - a;
         });
     }
 
@@ -110,7 +109,7 @@ function buildUnwatchedList() {
             resources: app.getAllowedResources(app.options.resources),
             pinned: app.getPinned(show.showId)
         };
-        
+
         elementLi.innerHTML = app.fillPattern(listPattern, dataPattern);
         elementLi.querySelector('.shows-mark').addEventListener('click', function() {
             showLoading();
