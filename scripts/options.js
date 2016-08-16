@@ -2,11 +2,13 @@ var customResources = [];
 
 function saveOptions(e) {
     e.preventDefault();
+    customCancel();
 
     chrome.storage.sync.set({
         notification: form.elements['notification'].checked,
         badge: form.elements['badge'].checked,
         rate: form.elements['rate'].checked,
+        pin: form.elements['pin'].checked,
         resources: function() {
             var resources = [];
             for (var i in form.elements['resources']) {
@@ -31,6 +33,7 @@ function restoreOptions() {
         form.elements['notification'].checked = options.notification;
         form.elements['badge'].checked = options.badge;
         form.elements['rate'].checked = options.rate;
+        form.elements['pin'].checked = options.pin;
 
         customResources = options.customResources;
 

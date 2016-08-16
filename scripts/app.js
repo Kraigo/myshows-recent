@@ -94,6 +94,7 @@ var app = {
             notification: true,
             badge: true,
             rate: false,
+            pin: true,
             resources: ['fsto'],
             customResources: [],
             pinned: []
@@ -175,6 +176,10 @@ var app = {
         var res = date.match(/(\d{2})\.(\d{2})\.(\d{4})/);
         return Date.parse(res[3] + '-' + res[2] + '-' + res[1]);
     },
+    getPinned: function(showId) {
+        return this.options.pin && this.options.pinned.indexOf(showId) >= 0;
+    },
+
     fillPattern: function(pattern, data, parent) {
         parent = parent ? parent + '.' : '';
         for (var key in data) {
@@ -189,8 +194,10 @@ var app = {
                 }
                 pattern = pattern.replace(reg, loopResult);
             } else {
-                var regIf = RegExp('{{' + parent + key + '!}}([\\s\\S]*){{!' + parent + key + '}}');
-                pattern = pattern.replace(regIf, '$1');
+                if (dataItem) {
+                    var regIf = RegExp('{{' + parent + key + '!}}([\\s\\S]*){{!' + parent + key + '}}');
+                    pattern = pattern.replace(regIf, '$1');
+                }
 
                 var reg = RegExp('{{' + parent + key + '}}', 'g');
                 pattern = pattern.replace(reg, dataItem);

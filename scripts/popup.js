@@ -81,6 +81,15 @@ function buildUnwatchedList() {
         return b - a;
     });
 
+    if (app.options.pin) {
+        unwatchedShows.forEach(function(show) {
+            show.pinned = app.options.pinned.indexOf(show.showId) >= 0;
+        })
+        unwatchedShows.sort(function(a, b) {
+            return (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0);
+        });
+    }
+
     var listPattern = document.getElementById('shows-list-tmp').innerHTML;
     var unwatchedList = document.getElementById('unwatchedList');
     unwatchedList.innerHTML = '';
@@ -98,13 +107,30 @@ function buildUnwatchedList() {
             episodeId: lastEpisode.episodeId,
             episodeNum: app.numFormat(lastEpisode.episodeNumber),
             episodeTitle: lastEpisode.title,
-            resources: app.getAllowedResources(app.options.resources)
+            resources: app.getAllowedResources(app.options.resources),
+            pinned: app.getPinned(show.showId)
         };
+        
         elementLi.innerHTML = app.fillPattern(listPattern, dataPattern);
         elementLi.querySelector('.shows-mark').addEventListener('click', function() {
             showLoading();
             app.checkEpisode(lastEpisode.episodeId, updateShows);
         });
+
+
+        if (app.options.pin) {
+            var pressTimer;
+
+            elementLi.addEventListener('mousedown', function() {
+                pressTimer = setTimeout(function() {
+                    pinShows(show.showId);
+                    buildUnwatchedList();
+                }, 500)
+            });
+            elementLi.addEventListener('mouseup', function() {
+                clearTimeout(pressTimer);
+            });
+        }
 
         if (app.options.rate) {
             elementLi.querySelector('.shows-rate').style.display = 'inline-block';
@@ -149,8 +175,7 @@ function pinShows(id) {
     } else {
         app.options.pinned.splice(pinIndex, 1);
     }
-
-    app.setOptions(app.options.pinned);
+    app.setOptions({ pinned: app.options.pinned });
 }
 
 app.getOptions(init);
