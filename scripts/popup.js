@@ -2,6 +2,9 @@
 
 function init(chromeOptions) {
     app.options = chromeOptions;
+
+    app.setLocalization(document.body);
+
     document.getElementById('refreshBtn').addEventListener('click', updateShows);
     document.getElementById('logoutBtn').addEventListener('click', function() {
         app.logout();
@@ -44,16 +47,19 @@ function authorize() {
     app.login(login, password, function(data, status) {
         hideLoading();
         if (status == 200) {
+            authForm.login.value = '';
+            authForm.password.value = '';
+
             app.setOptions({ auth: { login: login, password: password } }, function() {
                 showView('showsView');
                 updateShows();
             })
         } else if (status == 403) {
             document.getElementById('loginMessage').style.display = 'block';
-            document.getElementById('loginMessage').innerHTML = 'Неверный логин или пароль';
+            document.getElementById('loginMessage').innerHTML = app.getLocalization('INVALID_USERNAME_OR_PASSWORD');
         } else if (status == 404) {
             document.getElementById('loginMessage').style.display = 'block';
-            document.getElementById('loginMessage').innerHTML = 'Заполните все поля';
+            document.getElementById('loginMessage').innerHTML = app.getLocalization('FILL_ALL_FIELDS');
         }
     });
 }
@@ -114,7 +120,7 @@ function buildUnwatchedList() {
         var lastEpisode = show.unwatchedEpisodesData[show.unwatchedEpisodesData.length - 1];
         var elementLi = document.createElement('li');
         var dataPattern = {
-            title: show.ruTitle || show.title,
+            title: app.getLocalizationTitle(show),
             badge: show.unwatchedEpisodesData.length,
             id: show.showId,
             seasonNum: app.numFormat(lastEpisode.seasonNumber),
