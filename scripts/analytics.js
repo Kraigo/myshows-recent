@@ -11,4 +11,6 @@
 })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
 
 ga('create', 'UA-47509070-2', 'auto');
-ga('send', 'pageview');
+ga('set', 'checkProtocolTask', function() {});
+ga('require', 'displayfeatures');
+ga('send', 'pageview', '/popup.html');

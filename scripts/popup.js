@@ -135,6 +135,7 @@ function buildUnwatchedList() {
         elementLi.querySelector('.shows-mark').addEventListener('click', function() {
             showLoading();
             app.checkEpisode(lastEpisode.episodeId, updateShows);
+            ga('send', 'event', 'button', 'mark', 1);
         });
 
 
