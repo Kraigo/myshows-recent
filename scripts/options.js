@@ -9,6 +9,7 @@ function saveOptions(e) {
         badge: form.elements['badge'].checked,
         rate: form.elements['rate'].checked,
         pin: form.elements['pin'].checked,
+        language: form.elements['language'].value,
         resources: function() {
             var resources = [];
             for (var i in form.elements['resources']) {
@@ -34,13 +35,12 @@ function restoreOptions() {
         form.elements['badge'].checked = options.badge;
         form.elements['rate'].checked = options.rate;
         form.elements['pin'].checked = options.pin;
+        form.elements['language'].value = options.language;
 
         customResources = options.customResources;
 
         renderOptions();
         renderCustomOptions();
-
-
     });
 }
 
@@ -123,7 +123,11 @@ function customRemove(id) {
     renderCustomOptions();
 }
 
-restoreOptions();
+app.getOptions(function() {    
+    app.setLocalization(document.body);    
+    restoreOptions();
+})
+
 form.addEventListener('submit', saveOptions);
 
 var _customFields = document.getElementById('custom-fields');

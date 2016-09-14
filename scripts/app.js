@@ -63,17 +63,6 @@ var app = {
     },
 
     isAuthorized: function(callback) {
-
-        // Auth soft migration
-        // ---
-        if (app.localGet('auth')) {
-            app.setOptions({ auth: app.localGet('auth') });
-            localStorage.removeItem('auth');
-            callback(true);
-            return;
-        }
-        // ---
-
         chrome.storage.sync.get({ auth: false }, function(options) {
             callback(options.auth);
         });
@@ -104,6 +93,7 @@ var app = {
     },
 
     getOptions: function(callback) {
+        var language = navigator.language.substr(0,2)  === 'ru' ? 'ru' : 'en';
         chrome.storage.sync.get({
             notification: true,
             badge: true,
@@ -111,7 +101,8 @@ var app = {
             pin: true,
             resources: ['fsto'],
             customResources: [],
-            pinned: []
+            pinned: [],
+            language: language
         }, function(options) {
             app.options = options;
             callback(options);
@@ -228,6 +219,25 @@ var app = {
         pattern = pattern.replace(/{{.*?}}/g, '');
 
         return pattern;
+    },
+
+    getLocalization: function(localizationKey) {
+        return localization[localizationKey][app.options.language];
+    },
+
+    getLocalizationTitle: function(show) {
+        return app.options.language === 'ru' ? (show.ruTitle || show.title) : show.title
+    },
+    setLocalization: function(element) {
+        var textnode;
+        var language = app.options.language;
+        var walk = document.createTreeWalker(element,NodeFilter.SHOW_TEXT, null, false);
+        var localizationKeys = Object.keys(localization);
+        while(textnode = walk.nextNode()) {
+            localizationKeys.forEach(function(loc) {
+                textnode.nodeValue = textnode.nodeValue.replace('%'+loc + '%', localization[loc][language]);
+            })
+        }
     }
 
 };

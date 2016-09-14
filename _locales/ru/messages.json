@@ -1,0 +1,10 @@
+{
+  "appName": {
+    "message": "MyShows Recent",
+    "description": "Название приложения"
+  },
+  "appDesc": {
+    "message": "Быстро и удобно управлять списком сериалов", 
+    "description": "Описание приложения"
+  }
+}

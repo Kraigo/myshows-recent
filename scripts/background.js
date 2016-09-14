@@ -1,16 +1,23 @@
 function checkNewEpisodes() {
-    //chrome.notifications.create(null, {type:'basic', title: 'Background', message: 'Starting check new episodes', iconUrl: 'images/icon-128.png'}, function () {});
 
     app.isAuthorized(function(auth) {
         if (auth) {
             app.unwatched(function(unwatched) {
-                if (!unwatched) return;
+                app.shows(function(shows) {                    
+                
+                    if (unwatched) {
+                        var newEpisodes = getNewEpisodes(unwatched);
+                        if (newEpisodes.length) createNotification(shows, newEpisodes);
 
-                var newEpisodes = getNewEpisodes(unwatched);
-                if (newEpisodes.length) createNotification(newEpisodes);
+                        app.localSave('unwatched', unwatched);
+                    }
+                    
+                    if (shows) {
+                        app.localSave('shows', shows);
+                        app.updateBadge(app.getUnwatchedShows().length);
+                    }
 
-                app.localSave('unwatched', unwatched);
-                app.updateBadge(app.getUnwatchedShows().length);
+                })
             })
         }
     });
@@ -36,46 +43,43 @@ function getNewEpisodes(unwatched) {
     return newEpisodes;
 }
 
-function createNotification(newEpisodes) {
-    app.shows(function(shows) {
-        if (newEpisodes.length == 1) {
+function createNotification(shows, newEpisodes) {
+    if (newEpisodes.length == 1) {
 
-            var episode = newEpisodes[0]
+        var episode = newEpisodes[0];
+        var show = shows[episode.showId];
+        var message = app.getLocalizationTitle(show) + '\n' + 's' + app.numFormat(episode.seasonNumber) + 'e' + app.numFormat(episode.episodeNumber) + ' ' + episode.title;
+        var title = app.getLocalization('NEW_EPISODE');
+        var image = show.image;
+
+        app.notification('image', title, message, image);
+
+    } else {
+
+        var items = [];
+
+        for (var i in newEpisodes) {
+            var episode = newEpisodes[i];
             var show = shows[episode.showId];
-            var message = (show.ruTitle || show.title) + '\n' + 's' + app.numFormat(episode.seasonNumber) + 'e' + app.numFormat(episode.episodeNumber) + ' ' + episode.title;
-            var title = 'Новый эпизод';
-            var image = show.image;
-
-            app.notification('image', title, message, image);
-
-        } else {
-
-            var items = [];
-
-            for (var i in newEpisodes) {
-                var episode = newEpisodes[i];
-                var show = shows[episode.showId];
-                items.push({
-                    title: (show.ruTitle || show.title),
-                    message: 's' + app.numFormat(episode.seasonNumber) + 'e' + app.numFormat(episode.episodeNumber) + ' ' + episode.title
-                });
-            }
-
-            var title = 'Новый эпизод (' + items.length + ')';
-
-            app.notification('list', title, items);
+            items.push({
+                title: app.getLocalizationTitle(show),
+                message: 's' + app.numFormat(episode.seasonNumber) + 'e' + app.numFormat(episode.episodeNumber) + ' ' + episode.title
+            });
         }
 
-        app.localSave('shows', shows);
+        var title = app.getLocalization('NEW_EPISODE') + ' (' + items.length + ')';
 
-    });
+        app.notification('list', title, items);
+    }
 
 };
 
 
 // # # #
+app.getOptions(function() {
+    checkNewEpisodes();
+})
 
-checkNewEpisodes();
 
 chrome.runtime.onMessage.addListener(function(msg) {
     console.log(msg);
