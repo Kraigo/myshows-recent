@@ -135,7 +135,7 @@ function buildUnwatchedList() {
         elementLi.querySelector('.shows-mark').addEventListener('click', function() {
             showLoading();
             app.checkEpisode(lastEpisode.episodeId, updateShows);
-            ga('send', 'event', 'button', 'mark', 1);
+            ga('send', 'event', 'button', 'mark', dataPattern.title, 1);
         });
 
 
@@ -167,6 +167,8 @@ function buildUnwatchedList() {
         unwatchedList.appendChild(elementLi);
     });
 
+    setGoogleAnalytics();
+
 }
 
 function showView(viewName) {
@@ -197,6 +199,17 @@ function pinShows(id) {
         app.options.pinned.splice(pinIndex, 1);
     }
     app.setOptions({ pinned: app.options.pinned });
+    ga('send', 'event', 'press', 'pin');
+}
+
+function setGoogleAnalytics() {
+    var resourceLinks = document.querySelectorAll('#unwatchedList .shows-resources a');
+
+    [].forEach.call(resourceLinks, function(link) {
+        link.addEventListener('click', function() {
+            ga('send', 'event', 'link', 'resource', link.getAttribute('href'), 1);
+        })
+    })
 }
 
 app.getOptions(init);
