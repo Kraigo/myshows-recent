@@ -132,6 +132,16 @@ var app = {
                 result.push(show);
             }
         }
+
+        for (var i in result) {
+            // Sort Unwatched episodes by airDate
+            result[i].unwatchedEpisodesData.sort(function(a, b) {
+                var dateA = app.getEpisodeDate(a.airDate);
+                var dateB = app.getEpisodeDate(b.airDate);
+                return dateB - dateA;
+            })
+        }
+
         return result;
     },
 
