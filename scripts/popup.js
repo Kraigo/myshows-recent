@@ -18,6 +18,7 @@ function init(chromeOptions) {
         }
     });
     document.getElementById('authFormSubmit').addEventListener('click', authorize);
+    document.getElementById('searchBtn').addEventListener('click', search)
 
     app.isAuthorized(function(auth) {
         if (auth) {
@@ -208,6 +209,35 @@ function setGoogleAnalytics() {
     [].forEach.call(resourceLinks, function(link) {
         link.addEventListener('click', function() {
             ga('send', 'event', 'link', 'resource', link.getAttribute('href'), 1);
+        })
+    })
+}
+
+function search() {
+    var q = document.getElementById('searchInput').value;
+    app.search(q, function(data) {
+
+        if (Array.isArray(data) && data.length === 0) return;
+
+        var shows = app.normalizeShows(data);
+        var searchPattern = document.getElementById('search-list-tmp').innerHTML;
+        var searchList = document.getElementById('searchList');
+        searchList.innerHTML = '';
+        // searchList.style.display = 'block'
+
+        shows.length = 5;
+
+        shows.forEach(function(show) {            
+            var elementLi = document.createElement('li');
+
+            var dataPattern = {
+                episodeId: show.id,
+                title: app.getLocalizationTitle(show),
+                year: show.year
+            }
+            
+            elementLi.innerHTML = app.fillPattern(searchPattern, dataPattern);
+            searchList.appendChild(elementLi);
         })
     })
 }

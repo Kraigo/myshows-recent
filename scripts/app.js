@@ -59,7 +59,11 @@ var app = {
     },
     
     rateEpisode: function(episodeId, rate, callback) {
-        this.get('profile/episodes/rate/' + rate + '/' + episodeId, callback)
+        this.get('profile/episodes/rate/' + rate + '/' + episodeId, callback);
+    },
+    
+    search: function(q, callback) {
+        this.get('shows/search/?q=' + encodeURI(q), callback);
     },
 
     isAuthorized: function(callback) {
@@ -248,6 +252,13 @@ var app = {
                 textnode.nodeValue = textnode.nodeValue.replace('%'+loc + '%', localization[loc][language]);
             })
         }
+    },
+    normalizeShows: function(data) {
+        var shows = [];
+        for (var i in data) {
+            shows.push(data[i]);
+        }
+        return shows;
     }
 
 };

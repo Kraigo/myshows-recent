@@ -451,3 +451,42 @@ h4 {
 .options-favicon {
     vertical-align: middle;
 }
+
+/* Search list */
+
+#searchList {
+    display: none;
+}
+
+.view-search {
+    position: relative;
+    padding: 5px 10px;
+}
+.search-close {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+#searchBtn:focus ~ .search-list {
+    display: block;
+}
+.search-list {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    z-index: 1;
+    box-shadow: 0 0 3px rgba(0,0,0,0.3);
+    margin: 0;
+    padding: 10px 0;
+}
+.search-list > li > a {
+    padding: 3px 10px;
+    display: block;
+    color: #333;
+    text-decoration: none;
+}
+.search-list > li > a:hover {
+    background-color: #eee;
+    cursor: pointer;
+}

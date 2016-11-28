@@ -49,6 +49,11 @@
                     <img src="images/logo-16.png" height="16" width="73">
                 </a>
             </div>
+            <div class="view-search">
+                <input type="text" id="searchInput">
+                <button id="searchBtn">Search</button>
+                <ul id="searchList" class="search-list"></ul>
+            </div>
         </div>
         <ul id="unwatchedList" class="shows-list"></ul>
         <!-- 
@@ -84,6 +89,12 @@
             </span>
             <span class="shows-badge" title="%NUMBER_OF_NEW_EPISODES%">{{badge}}</span>
         </div>
+    </script>
+
+    <script type="text/html" id="search-list-tmp">
+        <a href="https://myshows.me/view/{{episodeId}}/" target="_blank">
+            {{title}}, {{year}}
+        </a>
     </script>
 
     <script src="scripts/resources.js"></script>
