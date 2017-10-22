@@ -42,6 +42,7 @@
         <div class="view-control">
             <div class="view-control-right">
                 <span class="view-control-item" id="refreshBtn">%REFRESH%</span> |
+                <span class="view-control-item" id="searchBtn">%SEARCH%</span> |
                 <span class="view-control-item" id="logoutBtn">%LOGOUT%</span>
             </div>
             <div class="view-logo">
@@ -49,9 +50,8 @@
                     <img src="images/logo-16.png" height="16" width="73">
                 </a>
             </div>
-            <div class="view-search">
-                <input type="text" id="searchInput">
-                <button id="searchBtn">Search</button>
+            <div class="search-view" id="searchView" style="display: none" >
+                <input type="text" id="searchInput" class="search-input">
                 <ul id="searchList" class="search-list"></ul>
             </div>
         </div>

@@ -1,6 +1,7 @@
 'use strict';
 
 function init(chromeOptions) {
+    var searchTimer;
     app.options = chromeOptions;
 
     app.setLocalization(document.body);
@@ -18,7 +19,16 @@ function init(chromeOptions) {
         }
     });
     document.getElementById('authFormSubmit').addEventListener('click', authorize);
-    document.getElementById('searchBtn').addEventListener('click', search)
+    document.getElementById('searchBtn').addEventListener('click', toggleSearchView);    
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        var q = this.value;
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            if (q) {
+                search(q);
+            }
+        }, 400);
+    });
 
     app.isAuthorized(function(auth) {
         if (auth) {
@@ -212,19 +222,31 @@ function setGoogleAnalytics() {
         })
     })
 }
-
-function search() {
-    var q = document.getElementById('searchInput').value;
-    app.search(q, function(data) {
-
-        if (Array.isArray(data) && data.length === 0) return;
-
-        var shows = app.normalizeShows(data);
+function toggleSearchView() {
+    var searchView = document.getElementById('searchView');
+    var searchInput = document.getElementById('searchInput');
+    var searchList = document.getElementById('searchList');
+    searchView.style.display = searchView.style.display == 'none' ? 'block' : 'none';
+    searchInput.value = '';
+    searchInput.focus();
+    searchList.innerHTML = '';
+    
+}
+function search(q) {
+    app.search(q, function(data) {        
         var searchPattern = document.getElementById('search-list-tmp').innerHTML;
         var searchList = document.getElementById('searchList');
         searchList.innerHTML = '';
-        // searchList.style.display = 'block'
 
+        if (!data) {
+            var elementLi = document.createElement('li');
+            elementLi.innerHTML = app.getLocalization('NOTHING_FOUND');
+            elementLi.style.textAlign = 'center';
+            searchList.appendChild(elementLi);
+            return;
+        }
+
+        var shows = app.normalizeShows(data);
         shows.length = 5;
 
         shows.forEach(function(show) {            

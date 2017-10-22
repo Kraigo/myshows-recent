@@ -9,6 +9,7 @@ function saveOptions(e) {
         badge: form.elements['badge'].checked,
         rate: form.elements['rate'].checked,
         pin: form.elements['pin'].checked,
+        context: form.elements['context'].checked,
         language: form.elements['language'].value,
         resources: function() {
             var resources = [];
@@ -22,6 +23,7 @@ function saveOptions(e) {
         }(),
         customResources: customResources
     }, function() {
+        app.updateContextMenu();
         document.getElementById('status').style.opacity = 1;
         setTimeout(function() {
             document.getElementById('status').style.opacity = 0;
@@ -35,6 +37,7 @@ function restoreOptions() {
         form.elements['badge'].checked = options.badge;
         form.elements['rate'].checked = options.rate;
         form.elements['pin'].checked = options.pin;
+        form.elements['context'].checked = options.context;
         form.elements['language'].value = options.language;
 
         customResources = options.customResources;

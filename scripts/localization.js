@@ -120,5 +120,21 @@ var localization = {
     PINING_SERIES: {
         en: 'Pining series',
         ru: 'Закреплять сериалы'
+    },
+    SEARCH: {
+        en: 'Search',
+        ru: 'Поиск'
+    },
+    ADD_TO_CONTEXT_MENU: {
+        en: 'Add to context menu',
+        ru: 'Добавить в контекствое меню'
+    },
+    SEARCH_CONTEXT_MENU: {
+        en: 'Search show',
+        ru: 'Найти сериал'
+    },
+    NOTHING_FOUND: {
+        en: 'Nothing found',
+        ru: 'Ничего не найдено'
     }
 }
