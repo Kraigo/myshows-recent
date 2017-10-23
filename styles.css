@@ -3,6 +3,10 @@ html {
     margin: 0;
     padding: 0;
 }
+body {
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    font-size: 13.5px;
+}
 
 .view {
     margin: 5px 10px;
@@ -382,6 +386,12 @@ h4 {
 .options-list input[type=text] {
     display: block;
     width: 100%;
+}
+
+.options-list li small {
+    padding-left: 25px;
+    margin-bottom: 10px;
+    display: block;
 }
 
 .options-list-control {

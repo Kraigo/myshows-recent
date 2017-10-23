@@ -264,4 +264,6 @@ function search(q) {
     })
 }
 
-app.getOptions(init);
+document.addEventListener("DOMContentLoaded", function() {
+    app.getOptions(init);
+});

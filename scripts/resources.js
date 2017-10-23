@@ -41,5 +41,9 @@ var $resources = [{
         id: 'zserialstv',
         title: 'Zserials.tv',
         link: 'http://zserials.tv/poisk-serialov?searchid=1917918&web=0&text='
+    }, {
+        id: 'youtube',
+        title: 'Youtube',
+        link: 'https://www.youtube.com/results?search_query='
     }
 ]
