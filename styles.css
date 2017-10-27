@@ -247,7 +247,10 @@ body {
 }
 
 .icon-zserialstv {
-    background-position: -96px 0
+    background-position: -96px 0;
+}
+.icon-youtube {
+    background-position: -96px -32px;
 }
 
 .icon-eye {
