@@ -1,6 +1,10 @@
 {
     "name": "__MSG_appName__",
+<<<<<<< HEAD
+    "version": "1.5.3",
+=======
     "version": "1.6.1",
+>>>>>>> 1f6ba20f77ebc907db1036d310fbdd3b0ae4c4ea
     "default_locale": "ru",
     "author": "Kraigo",
 
