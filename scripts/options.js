@@ -3,16 +3,16 @@ var customResources = [];
 function saveOptions(e) {
     e.preventDefault();
     customCancel();
-
     chrome.storage.sync.set({
         notification: form.elements['notification'].checked,
         badge: form.elements['badge'].checked,
         rate: form.elements['rate'].checked,
         pin: form.elements['pin'].checked,
-        language: form.elements['language'].value,
+        context: form.elements['context'].checked,
+        language: getRadioListValue(form.elements['language']),
         resources: function() {
             var resources = [];
-            for (var i in form.elements['resources']) {
+            for (var i = 0; i < form.elements['resources'].length; i++) {
                 var res = form.elements['resources'][i];
                 if (res.checked) {
                     resources.push(res.value);
@@ -22,6 +22,7 @@ function saveOptions(e) {
         }(),
         customResources: customResources
     }, function() {
+        app.updateContextMenu();
         document.getElementById('status').style.opacity = 1;
         setTimeout(function() {
             document.getElementById('status').style.opacity = 0;
@@ -35,7 +36,8 @@ function restoreOptions() {
         form.elements['badge'].checked = options.badge;
         form.elements['rate'].checked = options.rate;
         form.elements['pin'].checked = options.pin;
-        form.elements['language'].value = options.language;
+        form.elements['context'].checked = options.context;
+        setRadioListValue(form.elements['language'], options.language);
 
         customResources = options.customResources;
 
@@ -45,8 +47,8 @@ function restoreOptions() {
 }
 
 function fillOptionsValue() {
-    for (var i in form.elements['resources']) {
-        var res = form.elements['resources'][i];
+    for (var i = 0, res; i < form.elements['resources'].length; i++) {
+        res = form.elements['resources'][i];
         res.checked = app.options.resources.indexOf(res.value) >= 0;
     }
 }
@@ -123,10 +125,19 @@ function customRemove(id) {
     renderCustomOptions();
 }
 
-app.getOptions(function() {    
-    app.setLocalization(document.body);    
-    restoreOptions();
-})
+function getRadioListValue(collection) {
+    return Array.prototype.find.call(collection, function(elm) {
+        return elm.checked;
+    }).value;
+}
+
+function setRadioListValue(collection, value) {
+    Array.prototype.forEach.call(collection, function(elm) {
+        if (elm.value === value) {
+            elm.checked = true;
+        }
+    });
+}
 
 form.addEventListener('submit', saveOptions);
 
@@ -144,3 +155,11 @@ var _customLink = document.getElementById('custom-link');
 _customAdd.addEventListener('click', customAdd);
 _customCancel.addEventListener('click', customCancel);
 _customSave.addEventListener('click', customSave);
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    app.getOptions(function() {    
+        app.setLocalization(document.body);    
+        restoreOptions();
+    })
+});

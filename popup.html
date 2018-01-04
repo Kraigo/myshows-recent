@@ -42,12 +42,17 @@
         <div class="view-control">
             <div class="view-control-right">
                 <span class="view-control-item" id="refreshBtn">%REFRESH%</span> |
+                <span class="view-control-item" id="searchBtn">%SEARCH%</span> |
                 <span class="view-control-item" id="logoutBtn">%LOGOUT%</span>
             </div>
             <div class="view-logo">
                 <a href="http://myshows.me/" target="_blank" id="profileLink">
                     <img src="images/logo-16.png" height="16" width="73">
                 </a>
+            </div>
+            <div class="search-view" id="searchView" style="display: none" >
+                <input type="text" id="searchInput" class="search-input">
+                <ul id="searchList" class="search-list"></ul>
             </div>
         </div>
         <ul id="unwatchedList" class="shows-list"></ul>
@@ -80,10 +85,16 @@
 					<option value="4">4</option>
 					<option value="5">5</option>
 				</select>
-				<span class="icon icon-eye shows-mark"></span>
+				<a class="icon icon-eye shows-mark"></a>
             </span>
             <span class="shows-badge" title="%NUMBER_OF_NEW_EPISODES%">{{badge}}</span>
         </div>
+    </script>
+
+    <script type="text/html" id="search-list-tmp">
+        <a href="https://myshows.me/view/{{episodeId}}/" target="_blank">
+            {{title}}, {{year}}
+        </a>
     </script>
 
     <script src="scripts/resources.js"></script>

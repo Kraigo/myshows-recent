@@ -78,9 +78,16 @@ function createNotification(shows, newEpisodes) {
 // # # #
 app.getOptions(function() {
     checkNewEpisodes();
+    if (app.options.context) {
+        app.setContextMenu();
+    }
 })
 
 
 chrome.runtime.onMessage.addListener(function(msg) {
     console.log(msg);
 });
+
+
+  
+

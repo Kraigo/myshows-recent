@@ -59,7 +59,11 @@ var app = {
     },
     
     rateEpisode: function(episodeId, rate, callback) {
-        this.get('profile/episodes/rate/' + rate + '/' + episodeId, callback)
+        this.get('profile/episodes/rate/' + rate + '/' + episodeId, callback);
+    },
+    
+    search: function(q, callback) {
+        this.get('shows/search/?q=' + encodeURI(q), callback);
     },
 
     isAuthorized: function(callback) {
@@ -99,10 +103,11 @@ var app = {
             badge: true,
             rate: false,
             pin: true,
-            resources: ['fsto'],
+            resources: ['seasonvarru'],
             customResources: [],
             pinned: [],
-            language: language
+            language: language,
+            context: true
         }, function(options) {
             app.options = options;
             callback(options);
@@ -248,6 +253,39 @@ var app = {
                 textnode.nodeValue = textnode.nodeValue.replace('%'+loc + '%', localization[loc][language]);
             })
         }
+    },
+    normalizeShows: function(data) {
+        var shows = [];
+        for (var i in data) {
+            shows.push(data[i]);
+        }
+        return shows;
+    },
+
+    setContextMenu: function() {
+        chrome.contextMenus.create({
+            "id": "search",
+            "title": app.getLocalization('SEARCH_CONTEXT_MENU'),
+            "contexts": ["selection"],
+            "onclick" : function(e) {
+                chrome.tabs.create({
+                    url: 'https://myshows.me/search/?q=' + e.selectionText
+                })
+            }
+        });
+    },
+    removeContextMenu: function() {
+        chrome.contextMenus.remove('search')
+    },
+    updateContextMenu: function() {
+        app.getOptions(function() {
+            if (app.options.context) {
+                app.removeContextMenu();
+                app.setContextMenu();
+            } else {
+                app.removeContextMenu();
+            }
+        })
     }
 
 };

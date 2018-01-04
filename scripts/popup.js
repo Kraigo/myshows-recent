@@ -1,6 +1,7 @@
 'use strict';
 
 function init(chromeOptions) {
+    var searchTimer;
     app.options = chromeOptions;
 
     app.setLocalization(document.body);
@@ -18,6 +19,16 @@ function init(chromeOptions) {
         }
     });
     document.getElementById('authFormSubmit').addEventListener('click', authorize);
+    document.getElementById('searchBtn').addEventListener('click', toggleSearchView);    
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        var q = this.value;
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            if (q) {
+                search(q);
+            }
+        }, 400);
+    });
 
     app.isAuthorized(function(auth) {
         if (auth) {
@@ -132,7 +143,8 @@ function buildUnwatchedList() {
         };
 
         elementLi.innerHTML = app.fillPattern(listPattern, dataPattern);
-        elementLi.querySelector('.shows-mark').addEventListener('click', function() {
+        elementLi.querySelector('.shows-mark').addEventListener('click', function(e) {
+            e,preventDefault();
             showLoading();
             app.checkEpisode(lastEpisode.episodeId, updateShows);
             ga('send', 'event', 'button', 'mark', dataPattern.title, 1);
@@ -142,15 +154,21 @@ function buildUnwatchedList() {
         if (app.options.pin) {
             var pressTimer;
 
-            elementLi.addEventListener('mousedown', function() {
-                pressTimer = setTimeout(function() {
-                    pinShows(show.showId);
-                    buildUnwatchedList();
-                }, 500)
+            elementLi.addEventListener('mousedown', function(event) {
+                console.log(event);
+                if (isMouseLeft(event) && ['A', 'SELECT'].indexOf(event.target.nodeName) < 0) {
+                    pressTimer = setTimeout(function() {
+                        pinShows(show.showId);
+                        buildUnwatchedList();
+                    }, 500)
+                }
             });
             elementLi.addEventListener('mouseup', function() {
                 clearTimeout(pressTimer);
             });
+            elementLi.addEventListener('mousemove', function() {
+                clearTimeout(pressTimer);
+            })
         }
 
         if (app.options.rate) {
@@ -211,5 +229,58 @@ function setGoogleAnalytics() {
         })
     })
 }
+function toggleSearchView() {
+    var searchView = document.getElementById('searchView');
+    var searchInput = document.getElementById('searchInput');
+    var searchList = document.getElementById('searchList');
+    searchView.style.display = searchView.style.display == 'none' ? 'block' : 'none';
+    searchInput.value = '';
+    searchInput.focus();
+    searchList.innerHTML = '';
+    
+}
+function search(q) {
+    app.search(q, function(data) {        
+        var searchPattern = document.getElementById('search-list-tmp').innerHTML;
+        var searchList = document.getElementById('searchList');
+        searchList.innerHTML = '';
 
-app.getOptions(init);
+        if (!data) {
+            var elementLi = document.createElement('li');
+            elementLi.innerHTML = app.getLocalization('NOTHING_FOUND');
+            elementLi.style.textAlign = 'center';
+            searchList.appendChild(elementLi);
+            return;
+        }
+
+        var shows = app.normalizeShows(data);
+        shows.length = 5;
+
+        shows.forEach(function(show) {            
+            var elementLi = document.createElement('li');
+
+            var dataPattern = {
+                episodeId: show.id,
+                title: app.getLocalizationTitle(show),
+                year: show.year
+            }
+            
+            elementLi.innerHTML = app.fillPattern(searchPattern, dataPattern);
+            searchList.appendChild(elementLi);
+        })
+    })
+}
+
+function isMouseLeft(event) {
+    if ('buttons' in event) {
+        return event.buttons === 1;
+    } else if ('which' in event) {
+        return event.which === 1;
+    } else {
+        return event.button === 1;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    app.getOptions(init);
+});

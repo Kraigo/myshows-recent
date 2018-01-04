@@ -1,12 +1,21 @@
 {
     "name": "__MSG_appName__",
+<<<<<<< HEAD
     "version": "1.5.3",
+=======
+    "version": "1.6.1",
+>>>>>>> 1f6ba20f77ebc907db1036d310fbdd3b0ae4c4ea
     "default_locale": "ru",
+    "author": "Kraigo",
 
     "manifest_version": 2,
 
-    "background": {
+    "__background": {
         "scripts": ["scripts/resources.js", "scripts/localization.js", "scripts/app.js", "scripts/background.js"]
+    },
+    "background": {
+        "page": "background.html",
+        "persistent": true
     },
 
     "options_page": "options.html",
@@ -30,17 +39,21 @@
         "http://api.myshows.ru/",
         "http://media.myshows.me/",
         "notifications",
-        "storage"
+        "storage",
+        "contextMenus"
     ],
-    "content_security_policy": "script-src 'self' https://www.google-analytics.com; object-src 'self'"
+    "content_security_policy": "script-src 'self' https://www.google-analytics.com; object-src 'self'",
+    "__content_scripts": [{
+        "matches": ["*://fs.to/video/*"],
+        "js": ["scripts/connectors/fsto.js"]
+    }],
+    "__web_accessible_resources": [
+      "images/*"
+    ],
 
 
-    // "content_scripts": [{
-    //     "matches": ["*://fs.to/video/*"],
-    //     "js": ["scripts/connectors/fsto.js"]
-    // }]
-
-    // "web_accessible_resources": [
-    //   "images/*"
-    // ]
+    "-ms-preload": {
+        "backgroundScript": "bridges/edge/backgroundScriptsAPIBridge.js",
+        "contentScript": "bridges/edge/contentScriptsAPIBridge.js"
+    }
 }
