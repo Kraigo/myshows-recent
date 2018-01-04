@@ -6,9 +6,6 @@
 
     "manifest_version": 2,
 
-    "__background": {
-        "scripts": ["scripts/resources.js", "scripts/localization.js", "scripts/app.js", "scripts/background.js"]
-    },
     "background": {
         "page": "background.html",
         "persistent": true
@@ -38,18 +35,5 @@
         "storage",
         "contextMenus"
     ],
-    "content_security_policy": "script-src 'self' https://www.google-analytics.com; object-src 'self'",
-    "__content_scripts": [{
-        "matches": ["*://fs.to/video/*"],
-        "js": ["scripts/connectors/fsto.js"]
-    }],
-    "__web_accessible_resources": [
-      "images/*"
-    ],
-
-
-    "-ms-preload": {
-        "backgroundScript": "bridges/edge/backgroundScriptsAPIBridge.js",
-        "contentScript": "bridges/edge/contentScriptsAPIBridge.js"
-    }
+    "content_security_policy": "script-src 'self' https://www.google-analytics.com; object-src 'self'"
 }
