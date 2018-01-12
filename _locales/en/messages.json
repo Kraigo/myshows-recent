@@ -1,8 +1,11 @@
 {
   "appName": {
-    "message": "MyShows Recent"
+    "message": "MyShows Недавнее"
   },
   "appDesc": {
     "message": "Quickly and easily manage the list of series"
+  },
+  "appTitle": {
+    "message": "What to see?"
   }
 }

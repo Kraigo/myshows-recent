@@ -1,6 +1,6 @@
 {
     "name": "__MSG_appName__",
-    "version": "1.6.2",
+    "version": "1.6.3",
     "default_locale": "ru",
     "author": "Kraigo",
 
@@ -25,7 +25,7 @@
     },
     "browser_action": {
         "default_icon": "images/icon-16.png",
-        "default_title": "MyShows, что посмотреть?",
+        "default_title": "__MSG_appTitle__",
         "default_popup": "popup.html"
     },
     "permissions": [
