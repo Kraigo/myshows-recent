@@ -38,8 +38,8 @@ var app = {
         chrome.storage.sync.remove('auth');
     },
 
-    profile: function() {
-        this.get('profile');
+    profile: function(callback) {
+        this.get('profile/', callback);
     },
 
     shows: function(callback) {

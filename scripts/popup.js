@@ -33,7 +33,8 @@ function init(chromeOptions) {
     app.isAuthorized(function(auth) {
         if (auth) {
 
-            document.getElementById('profileLink').setAttribute("href", 'https://myshows.me/' + auth.login);
+            var pr = app.options.language == 'ru' ? '' : app.options.language + '.';
+            document.getElementById('profileLink').setAttribute("href", 'https://' + pr + 'myshows.me/' + auth.login);
 
             showView('showsView');
 
@@ -65,6 +66,13 @@ function authorize() {
                 showView('showsView');
                 updateShows();
             })
+            // if user uses email as login then link to his profile will be invalid
+            // so we need to try to get and save user's 'real' login
+            app.profile(function (data, status) {
+                if (status == 200) {
+                  app.setOptions({ auth: { login: data.login }})
+                }
+            });
         } else if (status == 403) {
             document.getElementById('loginMessage').style.display = 'block';
             document.getElementById('loginMessage').innerHTML = app.getLocalization('INVALID_USERNAME_OR_PASSWORD');

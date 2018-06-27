@@ -1,6 +1,6 @@
 var localization = {
     MARK_AS_VIEWED: {
-        en: 'Mark as viewed',
+        en: 'Mark as watched',
         ru: 'Отметить как просмотренный'
     },
     NUMBER_OF_NEW_EPISODES: {
@@ -40,7 +40,7 @@ var localization = {
         ru: 'Новый эпизод'
     },
     LAST_VIEWED: {
-        en: 'Last viewed',
+        en: 'Last watched',
         ru: 'Последнее просмотренное'
     },
 
@@ -54,15 +54,15 @@ var localization = {
         ru: 'Язык интерфейса'
     },
     WHICH_RESOURCE_YOU_USE_FOR_WATCHING_SHOWS: {
-        en: 'Which resource you use for watching shows',
+        en: 'Which resources do you use for watching shows',
         ru: 'На каких ресурсах вы смотрите сериалы'
     },
     OWN_RESOURCES: {
-        en: 'Own resources',
-        ru: 'Свой ресурсы'
+        en: 'Custom resources',
+        ru: 'Свои ресурсы'
     },
     ADD_OWN_RESOURCE: {
-        en: 'Add own resource',
+        en: 'Add custom resource',
         ru: 'Добавить свой ресурс'
     },
     TITLE: {
@@ -102,7 +102,7 @@ var localization = {
         ru: 'Переход на ресурс работает с помощью поиска на сайте. Для этого нужно скопировать ссылку поиска и убрать текущий критерий поиска.'
     },
     LONG_PRESS_PIN_NOTE: {
-        en: 'To pin the shows at top of the list - make a long press on the desired show, before the title will become bold.',
+        en: 'To pin a show to the top of the list - make a long press on the desired show until its title becomes bold.',
         ru: 'Что бы закрепить сериал в начале списка - сделайте долгое нажатие на нужном сериале, до того, как заголовок станет жирным.'
     },
     NOTIFY_ABOUT_NEW_EPISODES: {
@@ -114,7 +114,7 @@ var localization = {
         ru: 'Отображать количество новых сериалов'
     },
     EVALUATE_VIEWED_EPISODES: {
-        en: 'Evaluate viewed episodes',
+        en: 'Rate watched episodes',
         ru: 'Оценивать просмотренные эпизоды'
     },
     PINING_SERIES: {
@@ -136,5 +136,11 @@ var localization = {
     NOTHING_FOUND: {
         en: 'Nothing found',
         ru: 'Ничего не найдено'
+    },
+
+    //* FQ DOMAIN NAME*/
+    DOMAIN: {
+        en: 'en.myshows.me',
+        ru: 'myshows.me'
     }
 }
