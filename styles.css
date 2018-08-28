@@ -21,6 +21,9 @@ body {
 #showsView {
     min-width: 330px;
 }
+#detailsView {
+    min-width: 330px;
+}
 
 .view-control {
     margin-bottom: 5px;

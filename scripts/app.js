@@ -284,6 +284,18 @@ var app = {
         return shows;
     },
 
+    groupBy: function(data, key) {
+        var group = {};
+        data.forEach(function(item) {
+            var itemKey = item[key];
+            group[itemKey] = group[itemKey] || [];
+            group[itemKey].push(item);
+        })
+        return Object.keys(group).map(function(key) { 
+            return group[key];
+        });
+    },
+
     setContextMenu: function() {
         chrome.contextMenus.create({
             "id": "search",

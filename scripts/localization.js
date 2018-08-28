@@ -149,6 +149,10 @@ var localization = {
         en: 'Unwatched shows',
         ru: 'Непросмотренные сериалы'
     },
+    BACK: {
+        en: 'Back',
+        ru: 'Назад'
+    },
     //* FQ DOMAIN NAME*/
     DOMAIN: {
         en: 'en.myshows.me',

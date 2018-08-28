@@ -13,6 +13,9 @@ function init(chromeOptions) {
         app.logout();
         showView('loginView');
     });
+    document.getElementById('backBtn').addEventListener('click', function() {
+        showView('showsView')
+    })
 
     document.getElementById('authForm').addEventListener('keyup', function(e) {
         if (e.which == 13) {
@@ -97,6 +100,7 @@ function updateShows() {
             app.localSave('unwatched', data);
             hideLoading();
             buildUnwatchedList();
+            // buildEpisodesList();
         });
     });
 }
@@ -158,6 +162,11 @@ function buildUnwatchedList() {
             ga('send', 'event', 'button', 'mark', dataPattern.title, 1);
         });
 
+        elementLi.querySelector('.show-title-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            showDetails(show);
+        });
+
 
         if (app.options.pin) {
             var pressTimer;
@@ -197,15 +206,74 @@ function buildUnwatchedList() {
 
 }
 
-function showView(viewName) {
-    var views = ['loginView', 'showsView'];
+function buildEpisodesList(episodes) {
+    
+    var listPattern = document.getElementById('episode-list-tmp').innerHTML;
+    var listHeaderPattern = document.getElementById('episode-header-tmp').innerHTML;
+    var episodesList = document.getElementById('showEpisodesList');
+    episodesList.innerHTML = '';
+
+    episodes.sort(function(a, b) {
+        return app.getEpisodeDate(a.airDate) - app.getEpisodeDate(b.airDate);
+    });
+
+    var episodesGroup = app.groupBy(episodes, 'seasonNumber');
+    episodesGroup.forEach(function(group) {
+        var firstEpisode = group[0];
+        var headerElementLi = document.createElement('li');
+
+        var headerDataPattern = {
+            seasonNum: app.numFormat(firstEpisode.seasonNumber)
+        }
+        headerElementLi.innerHTML = app.fillPattern(listHeaderPattern, headerDataPattern);        
+        episodesList.appendChild(headerElementLi);
+        
+        group.forEach(function(episode) {
+            var elementLi = document.createElement('li');
+            var dataPattern = {
+                title: episode.title,
+                seasonNum: app.numFormat(episode.seasonNumber),
+                episodeNum: app.numFormat(episode.episodeNumber),
+                airDate: episode.airDate
+            };    
+
+            elementLi.innerHTML = app.fillPattern(listPattern, dataPattern);   
+
+            elementLi.querySelector('.shows-mark').addEventListener('click', function(e) {
+                e.preventDefault();
+                showLoading();
+                app.checkEpisode(episode.episodeId, updateShows);
+                ga('send', 'event', 'button', 'mark', dataPattern.title, 1);
+            });
+            
+            episodesList.appendChild(elementLi);
+        });
+        
+    })
+
+    setGoogleAnalytics();
+
+}
+
+function showView(viewName, param) {
+    var views = ['loginView', 'showsView', 'detailsView'];
     views.forEach(function(view) {
+        var elm = document.getElementById(view);
         if (view == viewName) {
-            document.getElementById(view).style.display = 'block';
+            elm.style.display = 'block';
+            elm.classList.add('active-view');
+            elm.setAttribute('data-param', param);
         } else {
-            document.getElementById(view).style.display = 'none';
+            elm.style.display = 'none';
+            elm.classList.remove('active-view');
+            elm.setAttribute('data-param', '');
         }
     })
+}
+
+function viewParam() {
+    var elm = document.querySelector('.view.active-view');
+    return elm.getAttribute('data-param');
 }
 
 function showLoading() {
@@ -287,6 +355,11 @@ function isMouseLeft(event) {
     } else {
         return event.button === 1;
     }
+}
+
+function showDetails(show) {
+    showView('detailsView', show.showId);
+    buildEpisodesList(show.unwatchedEpisodesData);
 }
 
 document.addEventListener("DOMContentLoaded", function() {

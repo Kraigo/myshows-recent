@@ -61,9 +61,23 @@
 		<ul id="lastCheckedList" class="shows-list"></ul> -->
     </div>
 
+    <div class="view" id="detailsView">
+        <div class="view-control">
+            <div class="view-control-right">
+                <span class="view-control-item" id="backBtn">%BACK%</span>
+            </div>            
+            <div class="view-logo">
+                <a href="http://%DOMAIN%/" target="_blank" id="profileLink">
+                    <img src="images/logo-16.png" height="16" width="73">
+                </a>
+            </div>
+        </div>
+        <ul id="showEpisodesList" class="shows-list"></ul>
+    </div>
+
     <script type="text/html" id="shows-list-tmp">
         <h2 class="shows-title{{pinned!}} pinned{{!pinned}}">
-            <a href="http://%DOMAIN%/view/{{id}}/" target="_blank">{{title}}</a>
+            <a href="http://%DOMAIN%/view/{{id}}/" target="_blank" class="show-title-link">{{title}}</a>
         </h2>
         <div class="shows-resources">
             {{resources:}}
@@ -89,6 +103,32 @@
             </span>
             <span class="shows-badge" title="%NUMBER_OF_NEW_EPISODES%">{{badge}}</span>
         </div>
+    </script>    
+
+    <script type="text/html" id="episode-list-tmp">
+        <h2 class="shows-title">            
+            <span title="{{airDate}}">{{episodeNum}}</span>
+            <span>{{title}}</span>
+        </h2>
+        <div class="shows-control">
+            <span class="shows-check" title="%MARK_AS_VIEWED%">
+                <select class="shows-rate" style="display: none">
+                    <option value="" selected>★</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <a class="icon icon-eye shows-mark"></a>
+            </span>
+        </div>
+    </script>
+
+    <script type="text/html" id="episode-header-tmp">
+        <h2 class="shows-title">
+            <b>{{seasonNum}} season</b>
+        </h2>
     </script>
 
     <script type="text/html" id="search-list-tmp">
