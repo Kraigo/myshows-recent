@@ -6,6 +6,8 @@ function init(chromeOptions) {
 
     app.setLocalization(document.body);
 
+    app.updateUnwatchedBadge();
+
     document.getElementById('refreshBtn').addEventListener('click', updateShows);
     document.getElementById('logoutBtn').addEventListener('click', function() {
         app.logout();
@@ -132,8 +134,6 @@ function buildUnwatchedList() {
     var listPattern = document.getElementById('shows-list-tmp').innerHTML;
     var unwatchedList = document.getElementById('unwatchedList');
     unwatchedList.innerHTML = '';
-
-    app.updateUnwatchedBadge();
 
     unwatchedShows.forEach(function(show) {
         var lastEpisode = show.unwatchedEpisodesData[show.unwatchedEpisodesData.length - 1];
