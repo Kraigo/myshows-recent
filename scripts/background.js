@@ -14,7 +14,7 @@ function checkNewEpisodes() {
                     
                     if (shows) {
                         app.localSave('shows', shows);
-                        app.updateBadge(app.getUnwatchedShows().length);
+                        app.updateUnwatchedBadge();
                     }
 
                 })

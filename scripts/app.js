@@ -94,6 +94,22 @@ var app = {
             }
         });
 
+    },    
+
+    updateUnwatchedBadge: function() {
+        this.getOptions(function(options) {
+            switch(options.showOnBadge) {
+                case 'episodes': {
+                    app.updateBadge(app.getUnwatchedEpisodes().length);
+                    break;
+                }
+                case 'shows':
+                default: {
+                    app.updateBadge(app.getUnwatchedShows().length);
+                    break;
+                }
+            }
+        });
     },
 
     getOptions: function(callback) {
@@ -107,7 +123,8 @@ var app = {
             customResources: [],
             pinned: [],
             language: language,
-            context: true
+            context: true,
+            showOnBadge: 'shows'
         }, function(options) {
             app.options = options;
             callback(options);
@@ -148,6 +165,11 @@ var app = {
         }
 
         return result;
+    },
+
+    getUnwatchedEpisodes: function(unwatched) {
+        unwatched = unwatched || app.localGet('unwatched');
+        return this.normalizeShows(unwatched);
     },
 
     notification: function(type, title, body, image) {

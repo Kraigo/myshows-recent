@@ -137,7 +137,18 @@ var localization = {
         en: 'Nothing found',
         ru: 'Ничего не найдено'
     },
-
+    SHOW_ON_BADGE: {
+        en: 'Show on badge',
+        ru: 'Отображать на бейдже'
+    },
+    UNWATCHED_EPISODES: {
+        en: 'Unwatched episodes',
+        ru: 'Непросмотренные эпизоды'
+    },
+    UNWATCHED_SHOWS: {
+        en: 'Unwatched shows',
+        ru: 'Непросмотренные сериалы'
+    },
     //* FQ DOMAIN NAME*/
     DOMAIN: {
         en: 'en.myshows.me',

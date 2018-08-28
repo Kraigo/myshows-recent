@@ -20,7 +20,8 @@ function saveOptions(e) {
             }
             return resources;
         }(),
-        customResources: customResources
+        customResources: customResources,
+        showOnBadge: getRadioListValue(form.elements['showOnBadge'])
     }, function() {
         app.updateContextMenu();
         document.getElementById('status').style.opacity = 1;
@@ -38,6 +39,7 @@ function restoreOptions() {
         form.elements['pin'].checked = options.pin;
         form.elements['context'].checked = options.context;
         setRadioListValue(form.elements['language'], options.language);
+        setRadioListValue(form.elements['showOnBadge'], options.showOnBadge);
 
         customResources = options.customResources;
 

@@ -133,7 +133,7 @@ function buildUnwatchedList() {
     var unwatchedList = document.getElementById('unwatchedList');
     unwatchedList.innerHTML = '';
 
-    app.updateBadge(unwatchedShows.length);
+    app.updateUnwatchedBadge();
 
     unwatchedShows.forEach(function(show) {
         var lastEpisode = show.unwatchedEpisodesData[show.unwatchedEpisodesData.length - 1];
