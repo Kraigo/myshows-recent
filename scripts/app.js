@@ -85,10 +85,9 @@ var app = {
     },
 
     updateBadge: function(num) {
-        num = num.toString();
         this.getOptions(function(options) {
-            if (options.badge)
-                chrome.browserAction.setBadgeText({ text: num });
+            if (options.badge && num)
+                chrome.browserAction.setBadgeText({ text: num.toString() });
             else {
                 chrome.browserAction.setBadgeText({ text: '' });
             }
