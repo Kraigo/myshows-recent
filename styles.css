@@ -12,6 +12,10 @@ body {
     margin: 5px 10px;
     transition: width 0.3s ease;
     display: none;
+    position: relative;
+}
+.view {
+    animation: fadeIn 0.3s;
 }
 
 #loginView {
@@ -56,27 +60,32 @@ body {
 
 /* Shows list */
 
-.shows-list {
+.view-content {
     padding: 0 10px;
     margin: 0 -10px;
-    list-style: none;
-    max-height: 500px;
     overflow-y: auto;
     overflow-x: hidden;
+    max-height: 500px;
 }
 
-.shows-list::-webkit-scrollbar {
+.view-content::-webkit-scrollbar {
     width: 5px;
 }
 
-.shows-list::-webkit-scrollbar-track {
+.view-content::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
 }
 
-.shows-list::-webkit-scrollbar-thumb {
+.view-content::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+.shows-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .shows-list > li {
@@ -138,6 +147,11 @@ body {
 .shows-title a:hover {
     text-decoration: underline;
 }
+.shows-cover {
+    width: 100%;
+    height: auto;
+    display: block;
+}
 
 .shows-control {
     position: absolute;
@@ -196,6 +210,39 @@ body {
     border-radius: 10px;
     background-color: #ca2027;
     color: #fff;
+}
+
+
+.shows-header {
+    position: relative;
+    margin: 0 -10px;
+}
+.shows-header .shows-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: #fff;
+    padding: 5px 10px;
+    background-color: rgba(0,0,0,0.5);
+    font-size: 1.2em;
+    display: block;
+}
+.shows-header .shows-return {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #f0f0f0;
+    font-size: 0.9em;
+    padding: 5px 10px;
+    line-height: 1.5em;
+    text-decoration: none;
+    text-shadow: 1px 1px rgb(55, 55, 55);
+    background-color: rgba(0, 0, 0, 0);
+    /* font-weight: bold; */
+}
+.shows-header .shows-return:hover {
+    background-color: rgba(0,0,0,0.1);
 }
 
 .icon,
@@ -513,4 +560,14 @@ h4 {
 .search-list > li > a:hover {
     background-color: #eee;
     cursor: pointer;
+}
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }

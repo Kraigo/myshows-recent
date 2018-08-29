@@ -15,29 +15,33 @@
         <div class="bar"></div>
     </div>
 
+    <!-- LOGIN -->
     <div class="view" id="loginView">
         <div class="logo">
             <a href="https://%DOMAIN%/" target="_blank">
                 <img src="images/logo.png" height="27" width="123" alt="">
             </a>
         </div>
-        <form name="authForm" id="authForm">
-            <p>
-                <label>%LOGIN_OR_EMAIL%:</label>
-                <input type="text" class="input" name="login" autofocus>
-            </p>
-            <p>
-                <label>%PASSWORD%:</label>
-                <input type="password" class="input" name="password">
-            </p>
-            <p class="login-message" id="loginMessage"></p>
-            <p class="text-right">
-                <button type="button" class="button" id="authFormSubmit">%ENTER%</button>
-            </p>
-        </form>
+        
+        <div class="view-content">
+            <form name="authForm" id="authForm">
+                <p>
+                    <label>%LOGIN_OR_EMAIL%:</label>
+                    <input type="text" class="input" name="login" autofocus>
+                </p>
+                <p>
+                    <label>%PASSWORD%:</label>
+                    <input type="password" class="input" name="password">
+                </p>
+                <p class="login-message" id="loginMessage"></p>
+                <p class="text-right">
+                    <button type="button" class="button" id="authFormSubmit">%ENTER%</button>
+                </p>
+            </form>
+        </div>
     </div>
 
-
+    <!-- SHOWS -->
     <div class="view" id="showsView">
         <div class="view-control">
             <div class="view-control-right">
@@ -55,12 +59,13 @@
                 <ul id="searchList" class="search-list"></ul>
             </div>
         </div>
-        <ul id="unwatchedList" class="shows-list"></ul>
-        <!-- 
-		<h5 class="separate-title">%LAST_VIEWED%</h5>
-		<ul id="lastCheckedList" class="shows-list"></ul> -->
+        
+        <div class="view-content">
+            <ul id="unwatchedList" class="shows-list"></ul>
+        </div>
     </div>
 
+    <!-- DETAILS -->
     <div class="view" id="detailsView">
         <div class="view-control">
             <div class="view-control-right">
@@ -72,8 +77,13 @@
                 </a>
             </div>
         </div>
-        <ul id="showEpisodesList" class="shows-list"></ul>
+        <div class="view-content">
+            <div id="showEpisodesHeader" class="shows-header"></div>
+            <ul id="showEpisodesList" class="shows-list"></ul>
+        </div>
     </div>
+
+    
 
     <script type="text/html" id="shows-list-tmp">
         <h2 class="shows-title{{pinned!}} pinned{{!pinned}}">
@@ -92,12 +102,12 @@
             <a class="shows-episode" href="http://%DOMAIN%/view/episode/{{episodeId}}/" title="{{episodeTitle}}" target="_blank">s{{seasonNum}}e{{episodeNum}}</a>
             <span class="shows-check" title="%MARK_AS_VIEWED%">
 				<select class="shows-rate" style="display: none">
-					<option value="" selected>★</option>
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-					<option value="5">5</option>
+					<option value="" selected>&nbsp;★&nbsp;</option>
+					<option value="1">&nbsp;1&nbsp;</option>
+					<option value="2">&nbsp;2&nbsp;</option>
+					<option value="3">&nbsp;3&nbsp;</option>
+					<option value="4">&nbsp;4&nbsp;</option>
+					<option value="5">&nbsp;5&nbsp;</option>
 				</select>
 				<a class="icon icon-eye shows-mark"></a>
             </span>
@@ -106,26 +116,38 @@
     </script>    
 
     <script type="text/html" id="episode-list-tmp">
-        <h2 class="shows-title">            
-            <span title="{{airDate}}">{{episodeNum}}</span>
-            <span>{{title}}</span>
+        <h2 class="shows-title">
+            <a href="http://%DOMAIN%/view/episode/{{episodeId}}/" title="{{airDate}} - {{title}}" target="_blank">
+                <span>{{episodeNum}}</span>
+                <span>{{title}}</span>
+            </a>
         </h2>
         <div class="shows-control">
             <span class="shows-check" title="%MARK_AS_VIEWED%">
-                <select class="shows-rate" style="display: none">
+                <!-- <select class="shows-rate" style="display: none">
                     <option value="" selected>★</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
-                </select>
+                </select> -->
                 <a class="icon icon-eye shows-mark"></a>
             </span>
         </div>
     </script>
 
     <script type="text/html" id="episode-header-tmp">
+        <a class="shows-return" href="#back">&larr;&nbsp;%BACK%</a>
+        <img class="shows-cover" src="{{image}}" alt="{{title}}" width="320" height="180">
+        <h1 class="shows-title">
+            <a href="http://%DOMAIN%/view/{{showId}}/" target="_blank" class="show-title-link">
+                {{title}}
+            </a>
+        </h1>
+    </script>
+
+    <script type="text/html" id="episode-list-head-tmp">
         <h2 class="shows-title">
             <b>{{seasonNum}} season</b>
         </h2>

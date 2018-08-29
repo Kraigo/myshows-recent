@@ -11,10 +11,10 @@ function init(chromeOptions) {
     document.getElementById('refreshBtn').addEventListener('click', updateShows);
     document.getElementById('logoutBtn').addEventListener('click', function() {
         app.logout();
-        showView('loginView');
+        navigateView('loginView');
     });
     document.getElementById('backBtn').addEventListener('click', function() {
-        showView('showsView')
+        navigateView('showsView')
     })
 
     document.getElementById('authForm').addEventListener('keyup', function(e) {
@@ -41,7 +41,7 @@ function init(chromeOptions) {
             var pr = app.options.language == 'ru' ? '' : app.options.language + '.';
             document.getElementById('profileLink').setAttribute("href", 'https://' + pr + 'myshows.me/' + auth.login);
 
-            showView('showsView');
+            navigateView('showsView');
 
             if (app.localGet('shows') && app.localGet('unwatched')) {
                 buildUnwatchedList();
@@ -49,7 +49,7 @@ function init(chromeOptions) {
                 updateShows();
             }
         } else {
-            showView('loginView');
+            navigateView('loginView');
         }
     })
 }
@@ -68,7 +68,7 @@ function authorize() {
             authForm.password.value = '';
 
             app.setOptions({ auth: { login: login, password: password } }, function() {
-                showView('showsView');
+                navigateView('showsView');
                 updateShows();
             })
             // if user uses email as login then link to his profile will be invalid
@@ -100,7 +100,7 @@ function updateShows() {
             app.localSave('unwatched', data);
             hideLoading();
             buildUnwatchedList();
-            // buildEpisodesList();
+            buildEpisodesList();
         });
     });
 }
@@ -170,20 +170,20 @@ function buildUnwatchedList() {
 
         if (app.options.pin) {
             var pressTimer;
+            var pinElement = elementLi.querySelector('.shows-title');
 
-            elementLi.addEventListener('mousedown', function(event) {
-                console.log(event);
-                if (isMouseLeft(event) && ['A', 'SELECT'].indexOf(event.target.nodeName) < 0) {
+            pinElement.addEventListener('mousedown', function(event) {
+                // if (isMouseLeft(event) && ['A', 'SELECT'].indexOf(event.target.nodeName) < 0) {
                     pressTimer = setTimeout(function() {
                         pinShows(show.showId);
                         buildUnwatchedList();
                     }, 500)
-                }
+                // }
             });
-            elementLi.addEventListener('mouseup', function() {
+            pinElement.addEventListener('mouseup', function() {
                 clearTimeout(pressTimer);
             });
-            elementLi.addEventListener('mousemove', function() {
+            pinElement.addEventListener('mousemove', function() {
                 clearTimeout(pressTimer);
             })
         }
@@ -206,31 +206,64 @@ function buildUnwatchedList() {
 
 }
 
-function buildEpisodesList(episodes) {
+function buildEpisodesList() {
+
+    var showId = viewParam();
+
+    if (!showId) return;
     
+    var unwatchedShows = app.getUnwatchedShows();
+    var show = unwatchedShows.find(function(s) { return s.showId == showId });
+    if (show === undefined) {
+        var view = activeView();
+        if (view === 'detailsView') {
+            navigateView('showsView');
+        }
+        return;
+    }
+
+
+    var episodes = show.unwatchedEpisodesData;    
     var listPattern = document.getElementById('episode-list-tmp').innerHTML;
+    var listHeadPattern = document.getElementById('episode-list-head-tmp').innerHTML;
     var listHeaderPattern = document.getElementById('episode-header-tmp').innerHTML;
     var episodesList = document.getElementById('showEpisodesList');
+    var showEpisodesHeader = document.getElementById('showEpisodesHeader');
+
     episodesList.innerHTML = '';
+    showEpisodesHeader.innerHTML = '';
 
     episodes.sort(function(a, b) {
         return app.getEpisodeDate(a.airDate) - app.getEpisodeDate(b.airDate);
     });
 
+    showEpisodesHeader.innerHTML = app.fillPattern(listHeaderPattern, {
+        showId: show.showId,
+        title: app.getLocalizationTitle(show),
+        image: show.image
+    });
+
+    showEpisodesHeader.querySelector('.shows-return')
+        .addEventListener('click', function(e) {
+            e.preventDefault();
+            navigateView('showsView')
+        })
+
     var episodesGroup = app.groupBy(episodes, 'seasonNumber');
     episodesGroup.forEach(function(group) {
         var firstEpisode = group[0];
-        var headerElementLi = document.createElement('li');
+        var headElementLi = document.createElement('li');
 
         var headerDataPattern = {
             seasonNum: app.numFormat(firstEpisode.seasonNumber)
         }
-        headerElementLi.innerHTML = app.fillPattern(listHeaderPattern, headerDataPattern);        
-        episodesList.appendChild(headerElementLi);
+        headElementLi.innerHTML = app.fillPattern(listHeadPattern, headerDataPattern);        
+        episodesList.appendChild(headElementLi);
         
         group.forEach(function(episode) {
             var elementLi = document.createElement('li');
             var dataPattern = {
+                episodeId: episode.episodeId,
                 title: episode.title,
                 seasonNum: app.numFormat(episode.seasonNumber),
                 episodeNum: app.numFormat(episode.episodeNumber),
@@ -255,7 +288,7 @@ function buildEpisodesList(episodes) {
 
 }
 
-function showView(viewName, param) {
+function navigateView(viewName, param) {
     var views = ['loginView', 'showsView', 'detailsView'];
     views.forEach(function(view) {
         var elm = document.getElementById(view);
@@ -274,6 +307,11 @@ function showView(viewName, param) {
 function viewParam() {
     var elm = document.querySelector('.view.active-view');
     return elm.getAttribute('data-param');
+}
+
+function activeView() {
+    var elm = document.querySelector('.view.active-view');
+    return elm.getAttribute('id');
 }
 
 function showLoading() {
@@ -358,8 +396,11 @@ function isMouseLeft(event) {
 }
 
 function showDetails(show) {
-    showView('detailsView', show.showId);
-    buildEpisodesList(show.unwatchedEpisodesData);
+    navigateView('detailsView', show.showId);
+    var mainWidth = document.getElementById('showsView').clientWidth;
+    document.getElementById('detailsView').style.width = mainWidth + 'px';
+
+    buildEpisodesList();
 }
 
 document.addEventListener("DOMContentLoaded", function() {
