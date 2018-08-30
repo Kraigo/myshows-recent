@@ -8,6 +8,9 @@ Convenient plug-in for quick access to http://myshows.me
 
 
 ## Last Changes
+v1.7.1
+- Исправлена сортировка эпизодов
+
 v1.7.0
 - Добавлена страница с эпизодами сериала
 - Исправлен pin по нажатию только на название сериала

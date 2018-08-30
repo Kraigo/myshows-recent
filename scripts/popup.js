@@ -211,7 +211,7 @@ function buildEpisodesList() {
     var showId = viewParam();
 
     if (!showId) return;
-    
+
     var unwatchedShows = app.getUnwatchedShows();
     var show = unwatchedShows.find(function(s) { return s.showId == showId });
     if (show === undefined) {
@@ -229,13 +229,13 @@ function buildEpisodesList() {
     var listHeaderPattern = document.getElementById('episode-header-tmp').innerHTML;
     var episodesList = document.getElementById('showEpisodesList');
     var showEpisodesHeader = document.getElementById('showEpisodesHeader');
+    
+    episodes.sort(function(a, b) {
+        return a.episodeNumber - b.episodeNumber;
+    });
 
     episodesList.innerHTML = '';
     showEpisodesHeader.innerHTML = '';
-
-    episodes.sort(function(a, b) {
-        return app.getEpisodeDate(a.airDate) - app.getEpisodeDate(b.airDate);
-    });
 
     showEpisodesHeader.innerHTML = app.fillPattern(listHeaderPattern, {
         showId: show.showId,
@@ -251,6 +251,7 @@ function buildEpisodesList() {
 
     var episodesGroup = app.groupBy(episodes, 'seasonNumber');
     episodesGroup.forEach(function(group) {
+
         var firstEpisode = group[0];
         var headElementLi = document.createElement('li');
 
