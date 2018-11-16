@@ -1,35 +1,26 @@
 var app = {
     baseUrl: 'http://api.myshows.ru/',
     options: null,
-
-    get: function(method, callback) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", this.baseUrl + method, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4) {
-                if (!xhr.status) return;
-
-                if (xhr.status == 401) {
-                    app.isAuthorized(function(auth) {
-                        if (auth) {
-                            app.login(auth.login, auth.password);
-                            app.get(method, callback);
-                        }
-                    })
-                } else if (xhr.status == 403) {
-                    app.logout();
-                }
-
-                var success = (xhr.responseText[0] == '{') ? JSON.parse(xhr.responseText) : null;
-                callback ? callback(success, xhr.status) : '';
-            }
-        }
-        xhr.send(null);
+    defaultOptions = {
+        auth: null, // { login, password }
+        token: null,
+        notification: true,
+        badge: true,
+        rate: false,
+        pin: true,
+        resources: ['seasonvarru', 'hdrezkame'],
+        customResources: [],
+        pinned: [],
+        language: navigator.language.substr(0,2) === 'ru' ? 'ru' : 'en',
+        context: true,
+        showOnBadge: 'shows'
     },
     
-    login: function(login, password, callback) {
-        this.get('profile/login?login=' + login + '&password=' + password, callback);
+    login: function(login, password) {
+        return api.authorize()
+            .then(function(res) {
+                app.setOptions({'token': res.token});
+            })
     },
 
     logout: function() {
@@ -38,37 +29,28 @@ var app = {
         chrome.storage.sync.remove('auth');
     },
 
-    profile: function(callback) {
-        this.get('profile/', callback);
-    },
+    // profile: function(callback) {
+    //     this.get('profile/', callback);
+    // },
 
-    shows: function(callback) {
-        this.get('profile/shows/', callback);
+    updateShows: function(callback) {
+        api.unwatchedShowsList()
+            .then(function(data) {
+                app.localSave('shows', data);
+                return data;
+            });
     },
-
-    unwatched: function(callback) {
-        this.get('profile/episodes/unwatched/', callback);
-    },
-
-    watched: function(callback) {
-        this.get('profile/episodes/next/', callback);
-    },
-
-    checkEpisode: function(episodeId, callback) {
-        this.get('profile/episodes/check/' + episodeId, callback);
-    },
-    
-    rateEpisode: function(episodeId, rate, callback) {
-        this.get('profile/episodes/rate/' + rate + '/' + episodeId, callback);
-    },
-    
-    search: function(q, callback) {
-        this.get('shows/search/?q=' + encodeURI(q), callback);
+    updateEpisodes: function(callback) {
+        api.unwatchedEpisodesList()
+            .then(function(data) {
+                app.localSave('unwatched', data);
+                return data;
+            });
     },
 
     isAuthorized: function(callback) {
-        chrome.storage.sync.get({ auth: false }, function(options) {
-            callback(options.auth);
+        chrome.storage.sync.get({ token: null }, function(options) {
+            callback(!!options.token);
         });
     },
 
@@ -81,50 +63,34 @@ var app = {
     },
 
     numFormat: function(num) {
-        return (num.toString().length == 1) ? '0' + num : num;
+        return ('00' + num.toString()).substr(num.toString().length);
     },
 
     updateBadge: function(num) {
-        this.getOptions(function(options) {
-            if (options.badge && num)
-                chrome.browserAction.setBadgeText({ text: num.toString() });
-            else {
-                chrome.browserAction.setBadgeText({ text: '' });
-            }
-        });
+        if (num)
+            chrome.browserAction.setBadgeText({ text: num.toString() });
+        else {
+            chrome.browserAction.setBadgeText({ text: '' });
+        }
 
     },    
 
     updateUnwatchedBadge: function() {
-        this.getOptions(function(options) {
-            switch(options.showOnBadge) {
-                case 'episodes': {
-                    app.updateBadge(app.getUnwatchedEpisodes().length);
-                    break;
-                }
-                case 'shows':
-                default: {
-                    app.updateBadge(app.getUnwatchedShows().length);
-                    break;
-                }
+        switch(app.options.showOnBadge) {
+            case 'episodes': {
+                app.updateBadge(app.getUnwatchedEpisodes().length);
+                break;
             }
-        });
+            case 'shows':
+            default: {
+                app.updateBadge(app.getUnwatchedShows().length);
+                break;
+            }
+        }
     },
 
     getOptions: function(callback) {
-        var language = navigator.language.substr(0,2)  === 'ru' ? 'ru' : 'en';
-        chrome.storage.sync.get({
-            notification: true,
-            badge: true,
-            rate: false,
-            pin: true,
-            resources: ['seasonvarru'],
-            customResources: [],
-            pinned: [],
-            language: language,
-            context: true,
-            showOnBadge: 'shows'
-        }, function(options) {
+        chrome.storage.sync.get(app.defaultOptions, function(options) {
             app.options = options;
             callback(options);
         });
@@ -172,25 +138,21 @@ var app = {
     },
 
     notification: function(type, title, body, image) {
-        app.getOptions(function(options) {
-            if (!options.notification) return;
-            var options = {
-                type: type,
-                title: title,
-                iconUrl: 'images/icon-128.png'
-            };
+        var msgOptions = {
+            type: type,
+            title: title,
+            iconUrl: 'images/icon-128.png'
+        };
 
-            if (type == 'list') {
-                options.message = '';
-                options.items = body;
-            } else if (type == 'image') {
-                options.message = body;
-                options.imageUrl = image
-            }
+        if (type == 'list') {
+            msgOptions.message = '';
+            msgOptions.items = body;
+        } else if (type == 'image') {
+            msgOptions.message = body;
+            msgOptions.imageUrl = image
+        }
 
-            chrome.notifications.create(null, options, function() {});
-
-        })
+        chrome.notifications.create(null, msgOptions, function() {});
     },
 
     getAllowedResources: function(allowedRes) {
@@ -309,16 +271,6 @@ var app = {
     },
     removeContextMenu: function() {
         chrome.contextMenus.remove('search')
-    },
-    updateContextMenu: function() {
-        app.getOptions(function() {
-            if (app.options.context) {
-                app.removeContextMenu();
-                app.setContextMenu();
-            } else {
-                app.removeContextMenu();
-            }
-        })
     }
 
 };

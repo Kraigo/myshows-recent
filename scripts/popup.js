@@ -1,5 +1,11 @@
 'use strict';
 
+var $views = {
+    login: 'loginView',
+    main: 'showsView',
+    details: 'detailsView'
+}
+
 function init(chromeOptions) {
     var searchTimer;
     app.options = chromeOptions;
@@ -8,13 +14,13 @@ function init(chromeOptions) {
 
     app.updateUnwatchedBadge();
 
-    document.getElementById('refreshBtn').addEventListener('click', updateShows);
+    document.getElementById('refreshBtn').addEventListener('click', refreshLists);
     document.getElementById('logoutBtn').addEventListener('click', function() {
         app.logout();
-        navigateView('loginView');
+        navigateView($views.login);
     });
     document.getElementById('backBtn').addEventListener('click', function() {
-        navigateView('showsView')
+        navigateView($views.main)
     })
 
     document.getElementById('authForm').addEventListener('keyup', function(e) {
@@ -36,72 +42,67 @@ function init(chromeOptions) {
     });
 
     app.isAuthorized(function(auth) {
+        // TODO update
         if (auth) {
 
             var pr = app.options.language == 'ru' ? '' : app.options.language + '.';
             document.getElementById('profileLink').setAttribute("href", 'https://' + pr + 'myshows.me/' + auth.login);
 
-            navigateView('showsView');
+            navigateView($views.main);
 
             if (app.localGet('shows') && app.localGet('unwatched')) {
                 buildUnwatchedList();
             } else {
-                updateShows();
+                refreshLists();
             }
         } else {
-            navigateView('loginView');
+            navigateView($views.login);
         }
     })
 }
 
 function authorize() {
     showLoading();
-    document.getElementById('loginMessage').style.display = 'none';
+    var loginMessageElm = document.getElementById('loginMessage');
+    loginMessageElm.style.display = 'none';
 
     var login = authForm.login.value;
-    var password = md5(authForm.password.value);
+    var password = authForm.password.value;
 
-    app.login(login, password, function(data, status) {
-        hideLoading();
-        if (status == 200) {
+    app.login(login, password)
+        .then(function() {
             authForm.login.value = '';
             authForm.password.value = '';
 
-            app.setOptions({ auth: { login: login, password: password } }, function() {
-                navigateView('showsView');
-                updateShows();
-            })
-            // if user uses email as login then link to his profile will be invalid
-            // so we need to try to get and save user's 'real' login
-            app.profile(function (data, status) {
-                if (status == 200) {
-                  app.setOptions({ auth: { login: data.login }})
-                }
-            });
-        } else if (status == 403) {
-            document.getElementById('loginMessage').style.display = 'block';
-            document.getElementById('loginMessage').innerHTML = app.getLocalization('INVALID_USERNAME_OR_PASSWORD');
-        } else if (status == 404) {
-            document.getElementById('loginMessage').style.display = 'block';
-            document.getElementById('loginMessage').innerHTML = app.getLocalization('FILL_ALL_FIELDS');
-        }
-    });
+            // TODO Update profile
+
+            navigateView($views.main);
+            refreshLists();
+        })
+        .catch(function(err) {
+            if (err.status == 403) {
+                loginMessageElm.style.display = 'block';
+                loginMessageElm.innerHTML = app.getLocalization('INVALID_USERNAME_OR_PASSWORD');
+            } else if (err.status == 404) {
+                loginMessageElm.style.display = 'block';
+                loginMessageElm.innerHTML = app.getLocalization('FILL_ALL_FIELDS');
+            } else {
+                loginMessageElm.style.display = 'block';
+                loginMessageElm.innerHTML = app.getLocalization('UNEXPECTED_ERROR');
+            }
+        })
 }
 
-function updateShows() {
+function refreshLists() {
     showLoading();
-
-    app.shows(function(data, status) {
-        if (status == 401) return;
-
-        app.localSave('shows', data);
-
-        app.unwatched(function(data) {
-            app.localSave('unwatched', data);
-            hideLoading();
-            buildUnwatchedList();
-            buildEpisodesList();
-        });
+    Promise.all([
+        api.updateShows(),
+        app.updateEpisodes()
+    ])
+    .then(function(res) {
+        hideLoading();
+        buildUnwatchedList();
+        buildEpisodesList();
     });
 }
 
@@ -127,14 +128,6 @@ function buildUnwatchedList() {
         return dateB - dateA;
     });
 
-    // if (app.options.pin) {
-    //     for (var i = 0; i < unwatchedShows.length; i++) {
-    //         if (app.getPinned(unwatchedShows[i].showId)) {
-    //             unwatchedShows.splice(0, 0, unwatchedShows.splice(i, 1)[0]);
-    //         }
-    //     }
-    // }
-
     var listPattern = document.getElementById('shows-list-tmp').innerHTML;
     var unwatchedList = document.getElementById('unwatchedList');
     unwatchedList.innerHTML = '';
@@ -158,8 +151,12 @@ function buildUnwatchedList() {
         elementLi.querySelector('.shows-mark').addEventListener('click', function(e) {
             e.preventDefault();
             showLoading();
-            app.checkEpisode(lastEpisode.episodeId, updateShows);
-            ga('send', 'event', 'button', 'mark', dataPattern.title, 1);
+
+            api.checkEpisode(lastEpisode.episodeId)
+                    .then(function() {
+                        refreshLists();
+                        ga('send', 'event', 'button', 'mark', dataPattern.title, 1);
+                    });
         });
 
         elementLi.querySelector('.show-title-link').addEventListener('click', function(e) {
@@ -169,42 +166,24 @@ function buildUnwatchedList() {
 
 
         if (app.options.pin) {
-            var pressTimer;
-            var pinElement = elementLi.querySelector('.shows-title');
-
-            pinElement.addEventListener('mousedown', function(event) {
-                // if (isMouseLeft(event) && ['A', 'SELECT'].indexOf(event.target.nodeName) < 0) {
-                    pressTimer = setTimeout(function() {
-                        pinShows(show.showId);
-                        buildUnwatchedList();
-                    }, 500)
-                // }
-            });
-            pinElement.addEventListener('mouseup', function() {
-                clearTimeout(pressTimer);
-            });
-            pinElement.addEventListener('mousemove', function() {
-                clearTimeout(pressTimer);
-            })
+            setupPinFeature();        
         }
 
         if (app.options.rate) {
-            elementLi.querySelector('.shows-rate').style.display = 'inline-block';
-            elementLi.querySelector('.shows-rate').addEventListener('change', function(val) {
-                showLoading();
-                app.rateEpisode(lastEpisode.episodeId, this.value, updateShows);
-            });
+            setupRateFeature();
         }
 
-        if (new Date() - app.getEpisodeDate(show.unwatchedEpisodesData[0].airDate) < 86400000 * 2) {
-            elementLi.className = 'shows-recent';
+        if (isShowRecent(show)) {
+            elementLi.classList.add('shows-recent');
         }
+
         unwatchedList.appendChild(elementLi);
     });
 
-    setGoogleAnalytics();
+    setupGoogleAnalytics();
 
 }
+
 
 function buildEpisodesList() {
 
@@ -216,8 +195,8 @@ function buildEpisodesList() {
     var show = unwatchedShows.find(function(s) { return s.showId == showId });
     if (show === undefined) {
         var view = activeView();
-        if (view === 'detailsView') {
-            navigateView('showsView');
+        if (view === $views.details) {
+            navigateView(view.main);
         }
         return;
     }
@@ -246,7 +225,7 @@ function buildEpisodesList() {
     showEpisodesHeader.querySelector('.shows-return')
         .addEventListener('click', function(e) {
             e.preventDefault();
-            navigateView('showsView')
+            navigateView($views.main)
         })
 
     var episodesGroup = app.groupBy(episodes, 'seasonNumber');
@@ -276,8 +255,11 @@ function buildEpisodesList() {
             elementLi.querySelector('.shows-mark').addEventListener('click', function(e) {
                 e.preventDefault();
                 showLoading();
-                app.checkEpisode(episode.episodeId, updateShows);
-                ga('send', 'event', 'button', 'mark', dataPattern.title, 1);
+                api.checkEpisode(episode.episodeId)
+                    .then(function() {
+                        refreshLists();
+                        ga('send', 'event', 'button', 'mark', dataPattern.title, 1);
+                    });
             });
             
             episodesList.appendChild(elementLi);
@@ -285,13 +267,12 @@ function buildEpisodesList() {
         
     })
 
-    setGoogleAnalytics();
+    setupGoogleAnalytics();
 
 }
 
 function navigateView(viewName, param) {
-    var views = ['loginView', 'showsView', 'detailsView'];
-    views.forEach(function(view) {
+    for (view in $views) {
         var elm = document.getElementById(view);
         if (view == viewName) {
             elm.style.display = 'block';
@@ -302,7 +283,7 @@ function navigateView(viewName, param) {
             elm.classList.remove('active-view');
             elm.setAttribute('data-param', '');
         }
-    })
+    }
 }
 
 function viewParam() {
@@ -335,15 +316,6 @@ function pinShows(id) {
     ga('send', 'event', 'press', 'pin');
 }
 
-function setGoogleAnalytics() {
-    var resourceLinks = document.querySelectorAll('#unwatchedList .shows-resources a');
-
-    [].forEach.call(resourceLinks, function(link) {
-        link.addEventListener('click', function() {
-            ga('send', 'event', 'link', 'resource', link.getAttribute('href'), 1);
-        })
-    })
-}
 function toggleSearchView() {
     var searchView = document.getElementById('searchView');
     var searchInput = document.getElementById('searchInput');
@@ -355,7 +327,7 @@ function toggleSearchView() {
     
 }
 function search(q) {
-    app.search(q, function(data) {        
+    api.search(q, function(data) {        
         var searchPattern = document.getElementById('search-list-tmp').innerHTML;
         var searchList = document.getElementById('searchList');
         searchList.innerHTML = '';
@@ -386,6 +358,17 @@ function search(q) {
     })
 }
 
+function showDetails(show) {
+    navigateView($views.details, show.showId);
+    var mainWidth = document.getElementById('showsView').clientWidth;
+    document.getElementById($views.details).style.width = mainWidth + 'px';
+
+    buildEpisodesList();
+}
+
+// ==== UTILITY
+
+
 function isMouseLeft(event) {
     if ('buttons' in event) {
         return event.buttons === 1;
@@ -396,13 +379,54 @@ function isMouseLeft(event) {
     }
 }
 
-function showDetails(show) {
-    navigateView('detailsView', show.showId);
-    var mainWidth = document.getElementById('showsView').clientWidth;
-    document.getElementById('detailsView').style.width = mainWidth + 'px';
-
-    buildEpisodesList();
+function isShowRecent(show) {
+    return new Date() - app.getEpisodeDate(show.unwatchedEpisodesData[0].airDate) < 86400000 * 2;
 }
+
+
+// ==== SETUPS FEATURES
+
+
+function setupGoogleAnalytics() {
+    var resourceLinks = document.querySelectorAll('#unwatchedList .shows-resources a');
+
+    [].forEach.call(resourceLinks, function(link) {
+        link.addEventListener('click', function() {
+            ga('send', 'event', 'link', 'resource', link.getAttribute('href'), 1);
+        })
+    })
+}
+    
+function setupPinFeature() {
+    var pressTimer;
+    var pinElement = elementLi.querySelector('.shows-title');
+
+    pinElement.addEventListener('mousedown', function(event) {
+        pressTimer = setTimeout(function() {
+            pinShows(show.showId);
+            buildUnwatchedList();
+        }, 500)
+    });
+
+    ['mouseup', 'mousemove', 'mouseout'].forEach(function(eventName) {
+        pinElement.addEventListener(eventName, function() {
+            clearTimeout(pressTimer);
+        });
+    });
+}
+
+function setupRateFeature() {
+    elementLi.querySelector('.shows-rate').style.display = 'inline-block';
+    elementLi.querySelector('.shows-rate').addEventListener('change', function(val) {
+        showLoading();
+        api.rateEpisode(lastEpisode.episodeId, this.value)
+            .then(function() {
+                refreshLists();
+            });
+    });
+}
+
+//
 
 document.addEventListener("DOMContentLoaded", function() {
     app.getOptions(init);

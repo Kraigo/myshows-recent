@@ -1,28 +1,41 @@
+var BACKGROUND_REFRESH_INTERVAL = 2700000;
+
+function init() {
+    checkNewEpisodes();
+
+    if (app.options.context) {
+        app.setContextMenu();
+    }
+}
+
 function checkNewEpisodes() {
 
     app.isAuthorized(function(auth) {
-        if (auth) {
-            app.unwatched(function(unwatched) {
-                app.shows(function(shows) {                    
+        if (!auth) return;
+
+        app.getOptions(function(options) {
+            Promise.all([
+                app.updateShows(),
+                app.updateEpisodes()
+            ]).then(function(res) {
+                var shows = res[0];
+                var unwatched = res[1];
+
+                if (options.notification && unwatched) {
+                    var newEpisodes = getNewEpisodes(unwatched);
+                    if (newEpisodes.length) {
+                        createNotification(shows, newEpisodes);
+                    }
+                }
                 
-                    if (unwatched) {
-                        var newEpisodes = getNewEpisodes(unwatched);
-                        if (newEpisodes.length) createNotification(shows, newEpisodes);
-
-                        app.localSave('unwatched', unwatched);
-                    }
-                    
-                    if (shows) {
-                        app.localSave('shows', shows);
-                        app.updateUnwatchedBadge();
-                    }
-
-                })
+                if (options.badge && shows) {
+                    app.updateUnwatchedBadge();
+                }
             })
-        }
+        });
     });
 
-    setTimeout(checkNewEpisodes, 2700000)
+    setTimeout(checkNewEpisodes, BACKGROUND_REFRESH_INTERVAL)
 }
 
 function getNewEpisodes(unwatched) {
@@ -48,7 +61,10 @@ function createNotification(shows, newEpisodes) {
 
         var episode = newEpisodes[0];
         var show = shows[episode.showId];
-        var message = app.getLocalizationTitle(show) + '\n' + 's' + app.numFormat(episode.seasonNumber) + 'e' + app.numFormat(episode.episodeNumber) + ' ' + episode.title;
+        var message = app.getLocalizationTitle(show) + '\n' +
+            's' + app.numFormat(episode.seasonNumber) +
+            'e' + app.numFormat(episode.episodeNumber) +
+            ' ' + episode.title;
         var title = app.getLocalization('NEW_EPISODE');
         var image = show.image;
 
@@ -63,7 +79,9 @@ function createNotification(shows, newEpisodes) {
             var show = shows[episode.showId];
             items.push({
                 title: app.getLocalizationTitle(show),
-                message: 's' + app.numFormat(episode.seasonNumber) + 'e' + app.numFormat(episode.episodeNumber) + ' ' + episode.title
+                message: 's' + app.numFormat(episode.seasonNumber) +
+                    'e' + app.numFormat(episode.episodeNumber) +
+                    ' ' + episode.title
             });
         }
 
@@ -76,12 +94,7 @@ function createNotification(shows, newEpisodes) {
 
 
 // # # #
-app.getOptions(function() {
-    checkNewEpisodes();
-    if (app.options.context) {
-        app.setContextMenu();
-    }
-})
+app.getOptions(init)
 
 
 chrome.runtime.onMessage.addListener(function(msg) {

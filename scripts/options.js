@@ -1,9 +1,14 @@
 var customResources = [];
 
+function init() {
+    app.setLocalization(document.body);    
+    restoreOptions();
+}
+
 function saveOptions(e) {
     e.preventDefault();
     customCancel();
-    chrome.storage.sync.set({
+    var options = {
         notification: form.elements['notification'].checked,
         badge: form.elements['badge'].checked,
         rate: form.elements['rate'].checked,
@@ -22,8 +27,17 @@ function saveOptions(e) {
         }(),
         customResources: customResources,
         showOnBadge: getRadioListValue(form.elements['showOnBadge'])
-    }, function() {
-        app.updateContextMenu();
+    };
+    
+    chrome.storage.sync.set(options, function() {
+
+        if (options.context) {
+            app.removeContextMenu();
+            app.setContextMenu();
+        } else {
+            app.removeContextMenu();
+        }
+
         document.getElementById('status').style.opacity = 1;
         setTimeout(function() {
             document.getElementById('status').style.opacity = 0;
@@ -160,8 +174,5 @@ _customSave.addEventListener('click', customSave);
 
 
 document.addEventListener("DOMContentLoaded", function() {
-    app.getOptions(function() {    
-        app.setLocalization(document.body);    
-        restoreOptions();
-    })
+    app.getOptions(init);
 });

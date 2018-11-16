@@ -153,6 +153,10 @@ var localization = {
         en: 'Back',
         ru: 'Назад'
     },
+    UNEXPECTED_ERROR: {
+        en: 'Unexpected error',
+        ru: 'Произошла неожиданны ошибка'
+    },
     //* FQ DOMAIN NAME*/
     DOMAIN: {
         en: 'en.myshows.me',

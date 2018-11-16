@@ -28,7 +28,7 @@ var $resources = [{
     {
         id: 'hdrezkame',
         title: 'Hdrezka',
-        link: 'http://hdrezka.me/index.php?do=search&subaction=search&q='
+        link: 'http://hdrezka.ag/index.php?do=search&subaction=search&q='
     }, {
         id: 'seasonvarru',
         title: 'Seasonvar',

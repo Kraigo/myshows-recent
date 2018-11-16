@@ -16,8 +16,8 @@ var api = {
     
             for (var key in headers) {
                 this.xhr.setRequestHeader(key, this.headers[key]);
-            }     
-                        
+            }
+            
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4) {
                     if (!xhr.status) return;
@@ -57,8 +57,8 @@ var api = {
         return this.request(method, url, body, headers);
     },
 
-    login: function(username, password) {
-        var url = this.baseUrl + '/oauth/token';
+    authorize: function(username, password) {
+        var url = this.baseUrl + '/oauth/authorize';
         var headers = {
             'Accept': 'application/json',
             'Accept-Language': 'en',
@@ -82,7 +82,7 @@ var api = {
         return this.fetch(method, params);
     },
 
-    showsList: function() {
+    unwatchedShowsList: function() {
         var method = 'lists.Shows';
         var params = {
             list: this.listNames.unwatched
