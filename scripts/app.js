@@ -1,7 +1,6 @@
 var app = {
-    baseUrl: 'http://api.myshows.ru/',
     options: null,
-    defaultOptions = {
+    defaultOptions: {
         auth: null, // { login, password }
         token: null,
         notification: true,
@@ -17,10 +16,18 @@ var app = {
     },
     
     login: function(login, password) {
-        return api.authorize()
+        return api.authorize(login, password)
             .then(function(res) {
-                app.setOptions({'token': res.token});
-            })
+                return new Promise(function(resolve, reject) {
+                    var tokenData = {
+                        accessToken: res.access_token,
+                        refreshToken: res.refresh_token,
+                        tokenType: res.token_type
+                    };
+                    app.options.token = tokenData;
+                    app.setOptions({'token': tokenData }, resolve);
+                });
+            });
     },
 
     logout: function() {
@@ -34,14 +41,14 @@ var app = {
     // },
 
     updateShows: function(callback) {
-        api.unwatchedShowsList()
+        return api.unwatchedShowsList()
             .then(function(data) {
                 app.localSave('shows', data);
                 return data;
             });
     },
     updateEpisodes: function(callback) {
-        api.unwatchedEpisodesList()
+        return api.unwatchedEpisodesList()
             .then(function(data) {
                 app.localSave('unwatched', data);
                 return data;

@@ -96,7 +96,7 @@ function authorize() {
 function refreshLists() {
     showLoading();
     Promise.all([
-        api.updateShows(),
+        app.updateShows(),
         app.updateEpisodes()
     ])
     .then(function(res) {
@@ -272,9 +272,10 @@ function buildEpisodesList() {
 }
 
 function navigateView(viewName, param) {
-    for (view in $views) {
-        var elm = document.getElementById(view);
-        if (view == viewName) {
+    for (var view in $views) {
+        var viewId = $views[view];
+        var elm = document.getElementById(viewId);
+        if (viewId == viewName) {
             elm.style.display = 'block';
             elm.classList.add('active-view');
             elm.setAttribute('data-param', param);
@@ -382,7 +383,6 @@ function isMouseLeft(event) {
 function isShowRecent(show) {
     return new Date() - app.getEpisodeDate(show.unwatchedEpisodesData[0].airDate) < 86400000 * 2;
 }
-
 
 // ==== SETUPS FEATURES
 

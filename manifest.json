@@ -31,7 +31,7 @@
     "permissions": [
         "http://api.myshows.ru/",
         "http://media.myshows.me/",
-        "https://myshows.me",
+        "https://myshows.me/",
         "notifications",
         "storage",
         "contextMenus"

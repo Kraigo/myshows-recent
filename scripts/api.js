@@ -15,11 +15,11 @@ var api = {
 
     request: function(method, url, body, headers) {
         return new Promise(function(resolve, reject) {        
-        
+            var xhr = new XMLHttpRequest();
             xhr.open(method, url, true);
     
             for (var key in headers) {
-                this.xhr.setRequestHeader(key, this.headers[key]);
+                xhr.setRequestHeader(key, headers[key]);
             }
             
             xhr.onreadystatechange = function() {
@@ -28,12 +28,7 @@ var api = {
     
                     try {
                         var response = JSON.parse(xhr.response);
-    
-                        if (!response.error) {
-                            resolve(response.result);
-                        } else {                        
-                            reject(response.error);
-                        }
+                        resolve(response);
                     } catch(e) {
                         reject(xhr.response);
                     }
@@ -44,8 +39,28 @@ var api = {
         });
     },
 
+    submit: function(method, url, data) {
+        var urlEncodedData = "";
+        var urlEncodedDataPairs = [];
+        var headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+
+        for(var name in data) {
+            urlEncodedDataPairs.push(
+                encodeURIComponent(name)
+                + '='
+                + encodeURIComponent(data[name])
+            );
+        }
+
+        urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+');
+
+        return api.request(method, url, urlEncodedData, headers);
+    },
+
     fetch: function(method, params) {
-        var url = this.baseUrl + '/v2/rpc/';
+        var url = api.baseUrl + '/v2/rpc/';
         var headers = {
             'Accept': 'application/json',
             'Accept-Language': 'en',
@@ -53,29 +68,31 @@ var api = {
             'Authorization': 'Bearer ' + app.options.token
         }
         var body =  {
-            jsonrpc: this.jsonrpcVersion,
+            jsonrpc: api.jsonrpcVersion,
             method: method,
             params: params,
             id: 1
         }
-        return this.request(method, url, body, headers);
+        return api.request(method, url, body, headers)
+            .then(function(response) {
+                if (!response.error) {
+                    return Promise.resolve(response.result);
+                } else {                        
+                    return Promise.reject(response.error);
+                }
+            });
     },
 
     authorize: function(username, password) {
-        var url = this.baseUrl + '/oauth/authorize';
-        var headers = {
-            'Accept': 'application/json',
-            'Accept-Language': 'en',
-            'Content-Type': 'application/json; charset=utf-8'
-        }
-        var body = {
+        var url = api.baseUrl + '/oauth/token';      
+        var data = {
             'grant_type': 'password',
-            'client_id': '',
-            'client_secret': '',
+            'client_id': api.clientId,
+            'client_secret': api.clientSecret,
             'username': username,
             'password': password
         }
-        return this.request(method, url, body, headers);
+        return api.submit("POST", url, data);
     },
     
     profile: function(login) {
@@ -83,31 +100,31 @@ var api = {
         var params = {
             login: login
         };
-        return this.fetch(method, params);
+        return api.fetch(method, params);
     },
 
     unwatchedShowsList: function() {
         var method = 'lists.Shows';
         var params = {
-            list: this.listNames.unwatched
+            list: api.listNames.unwatched
         };
-        return this.fetch(method, params);
+        return api.fetch(method, params);
     },
 
     unwatchedEpisodesList: function() {
         var method = 'lists.Episodes';
         var params = {
-            list: this.listNames.unwatched
+            list: api.listNames.unwatched
         };
-        return this.fetch(method, params);
+        return api.fetch(method, params);
     },
 
     watchedEpisodesList: function() {
         var method = 'lists.Episodes';
         var params = {
-            list: this.listNames.watched
+            list: api.listNames.watched
         };
-        return this.fetch(method, params);
+        return api.fetch(method, params);
     },
 
     checkEpisode: function(episodeId) {
@@ -116,7 +133,7 @@ var api = {
             id: episodeId,
             rating: 0
         };
-        return this.fetch(method, params);
+        return api.fetch(method, params);
     },
     
     rateEpisode: function(episodeId, rate) {
@@ -125,7 +142,7 @@ var api = {
             id: episodeId,
             rating: rate
         };
-        return this.fetch(method, params);
+        return api.fetch(method, params);
     },
 
     unRateEpisode: function(episodeId) {
@@ -133,7 +150,7 @@ var api = {
         var params = {
             id: episodeId
         };
-        return this.fetch(method, params);
+        return api.fetch(method, params);
     },
     
     
@@ -142,7 +159,7 @@ var api = {
         var params = {
             query: q
         };
-        return this.fetch(method, params);
+        return api.fetch(method, params);
     },
 
 }
