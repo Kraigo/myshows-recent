@@ -2,7 +2,7 @@ var api = {
     baseUrl: 'https://myshows.me',
     jsonrpcVersion: '2.0',
     clientId: 'myshows_kraigo',
-    clientSecret: '',
+    clientSecret: 'nmpV1yf8Mg6H3WuhOp6WHadV',
     redirectUrl: 'myshows://oauth-callback/myshows',
 
 
@@ -40,23 +40,12 @@ var api = {
     },
 
     submit: function(method, url, data) {
-        var urlEncodedData = "";
-        var urlEncodedDataPairs = [];
         var headers = {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
+        var urlencodedData = api.encodeData(data);
 
-        for(var name in data) {
-            urlEncodedDataPairs.push(
-                encodeURIComponent(name)
-                + '='
-                + encodeURIComponent(data[name])
-            );
-        }
-
-        urlEncodedData = urlEncodedDataPairs.join('&').replace(/%20/g, '+');
-
-        return api.request(method, url, urlEncodedData, headers);
+        return api.request(method, url, urlencodedData, headers);
     },
 
     fetch: function(method, params) {
@@ -73,7 +62,9 @@ var api = {
             params: params,
             id: 1
         }
-        return api.request(method, url, body, headers)
+
+        // return api.submit("POST", url, body);
+        return api.request("POST", url, body, headers)
             .then(function(response) {
                 if (!response.error) {
                     return Promise.resolve(response.result);
@@ -81,6 +72,31 @@ var api = {
                     return Promise.reject(response.error);
                 }
             });
+    },
+
+    encodeData(data) {
+        var urlEncodedDataPairs = [];
+
+        for(var name in data) {
+            if (typeof data[name] === 'object') {
+                for (var oname in data[name]) {
+                    urlEncodedDataPairs.push(
+                        encodeURIComponent(name + '[' + oname + ']')
+                        + '='
+                        + encodeURIComponent(data[name][oname])
+                    );
+                }
+            } else {
+                urlEncodedDataPairs.push(
+                    encodeURIComponent(name)
+                    + '='
+                    + encodeURIComponent(data[name])
+                );
+            }
+            
+        }
+
+        return urlEncodedDataPairs.join('&').replace(/%20/g, '+');
     },
 
     authorize: function(username, password) {
