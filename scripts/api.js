@@ -1,6 +1,10 @@
 var api = {
-    baseUrl: "https://myshows.me",
-    jsonrpcVersion: "2.0",
+    baseUrl: 'https://myshows.me',
+    jsonrpcVersion: '2.0',
+    clientId: 'myshows_kraigo',
+    clientSecret: '',
+    redirectUrl: 'myshows://oauth-callback/myshows',
+
 
     listNames: {
         favorites: 'favorites',
