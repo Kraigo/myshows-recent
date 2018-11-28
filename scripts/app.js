@@ -240,7 +240,7 @@ var app = {
         var localizationKeys = Object.keys(localization);
         while(textnode = walk.nextNode()) {
             localizationKeys.forEach(function(loc) {
-                textnode.nodeValue = textnode.nodeValue.replace('%'+loc + '%', localization[loc][language]);
+                textnode.nodeValue = textnode.nodeValue.replace('%' + loc + '%', localization[loc][language]);
             })
         }
     },
