@@ -1,5 +1,5 @@
 var api = {
-    baseUrl: 'https://myshows.me',
+    baseUrl: 'https://api.myshows.me',
     jsonrpcVersion: '2.0',
     clientId: 'myshows_kraigo',
     clientSecret: '',
@@ -35,7 +35,7 @@ var api = {
                 }
             }
             
-            xhr.send(JSON.stringify(body));
+            xhr.send(body);
         });
     },
 
@@ -57,16 +57,14 @@ var api = {
         var headers = {
             'Accept': 'application/json',
             'Accept-Language': 'en',
-            'Content-Type': 'application/json; charset=utf-8',
-            'Authorization': 'Bearer ' + accessToken
-        }
-
-        var body =  {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + accessToken}
+        var body =  JSON.stringify({
             jsonrpc: api.jsonrpcVersion,
             method: method,
             params: params,
             id: 1
-        }
+        });
 
         // return api.submit("POST", url, body);
         return api.request("POST", url, body, headers)
