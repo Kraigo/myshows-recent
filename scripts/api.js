@@ -2,7 +2,7 @@ var api = {
     baseUrl: 'https://myshows.me',
     jsonrpcVersion: '2.0',
     clientId: 'myshows_kraigo',
-    clientSecret: 'nmpV1yf8Mg6H3WuhOp6WHadV',
+    clientSecret: '',
     redirectUrl: 'myshows://oauth-callback/myshows',
 
 
