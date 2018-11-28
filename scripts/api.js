@@ -35,7 +35,7 @@ var api = {
                 }
             }
             
-            xhr.send(body);
+            xhr.send(JSON.stringify(body));
         });
     },
 
@@ -49,13 +49,18 @@ var api = {
     },
 
     fetch: function(method, params) {
+        var accessToken = app.options.token && app.options.token.accessToken;
+
+        if (!accessToken) return Promise.reject(null);
+
         var url = api.baseUrl + '/v2/rpc/';
         var headers = {
             'Accept': 'application/json',
             'Accept-Language': 'en',
             'Content-Type': 'application/json; charset=utf-8',
-            'Authorization': 'Bearer ' + app.options.token
+            'Authorization': 'Bearer ' + accessToken
         }
+
         var body =  {
             jsonrpc: api.jsonrpcVersion,
             method: method,
