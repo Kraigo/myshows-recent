@@ -115,10 +115,11 @@ var api = {
     },
     
     profile: function(login) {
-        var method = 'profile.Get';
-        var params = {
-            login: login
-        };
+        var method = 'profile.Get';        
+        var params = {};
+        if (login) {
+            params.login = login;
+        }
         return api.fetch(method, params);
     },
 

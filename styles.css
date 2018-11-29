@@ -388,23 +388,6 @@ body {
     animation: loading 2s linear 1.3s infinite;
 }
 
-@keyframes loading {
-    from {
-        left: 50%;
-        width: 0;
-        z-index: 100;
-    }
-    33.3333% {
-        left: 0;
-        width: 100%;
-        z-index: 10;
-    }
-    to {
-        left: 0;
-        width: 100%;
-    }
-}
-
 
 /* OPTIONS */
 
@@ -562,6 +545,23 @@ h4 {
     cursor: pointer;
 }
 
+/* ANIMATION */
+@keyframes loading {
+    from {
+        left: 50%;
+        width: 0;
+        z-index: 100;
+    }
+    33.3333% {
+        left: 0;
+        width: 100%;
+        z-index: 10;
+    }
+    to {
+        left: 0;
+        width: 100%;
+    }
+}
 
 @keyframes fadeIn {
     from {

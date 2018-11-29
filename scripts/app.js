@@ -41,6 +41,7 @@ var app = {
     // },
 
     updateShows: function(callback) {
+        // TODO remove
         return api.unwatchedShowsList()
             .then(function(data) {
                 app.localSave('shows', data);
@@ -48,6 +49,15 @@ var app = {
             });
     },
     updateEpisodes: function(callback) {
+        // TODO remove
+        return api.unwatchedEpisodesList()
+            .then(function(data) {
+                app.localSave('unwatched', data);
+                return data;
+            });
+    },
+
+    updateUnwatched: function() {
         return api.unwatchedEpisodesList()
             .then(function(data) {
                 app.localSave('unwatched', data);
@@ -107,7 +117,22 @@ var app = {
         chrome.storage.sync.set(options, callback);
     },
 
-    getUnwatchedShows: function(shows, unwatched) {
+    getUnwatchedShows: function(unwatched) {
+        unwatched = unwatched || app.localGet('unwatched');
+
+        return unwatched
+            .map(function(u) { return u.show })
+            .filter(function(s, index, arr) {
+                var firstIndex = arr.findIndex(function(a) {
+                    return a.id == s.id;
+                })
+                return firstIndex == index
+            });
+
+
+        //TODO remove
+
+        return result;
         shows = shows || app.localGet('shows');
         unwatched = unwatched || app.localGet('unwatched');
         var result = [];
@@ -141,7 +166,13 @@ var app = {
 
     getUnwatchedEpisodes: function(unwatched) {
         unwatched = unwatched || app.localGet('unwatched');
-        return this.normalizeShows(unwatched);
+        return unwatched
+            .map(function(u) { return u.episode })
+            .sort(function(a, b) {
+                var dateA = Date.parse(a.airDate);
+                var dateB = Date.parse(b.airDate);
+                return dateB - dateA;
+            })
     },
 
     notification: function(type, title, body, image) {
@@ -188,6 +219,7 @@ var app = {
     },
 
     getEpisodeDate: function(date) {
+        // TODO remove
         var res = date.match(/(\d{2})\.(\d{2})\.(\d{4})/);
         return Date.parse(res[3] + '-' + res[2] + '-' + res[1]);
     },
@@ -245,6 +277,7 @@ var app = {
         }
     },
     normalizeShows: function(data) {
+        // TODO remove
         var shows = [];
         for (var i in data) {
             shows.push(data[i]);

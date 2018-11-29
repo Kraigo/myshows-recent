@@ -95,37 +95,29 @@ function authorize() {
 
 function refreshLists() {
     showLoading();
-    Promise.all([
-        app.updateShows(),
-        app.updateEpisodes()
-    ])
-    .then(function(res) {
-        hideLoading();
-        buildUnwatchedList();
-        buildEpisodesList();
-    });
+    
+    app.updateUnwatched()
+        .then(function(unwatched) {
+            hideLoading();
+            buildUnwatchedList(unwatched);
+            buildEpisodesList(unwatched);
+        });
 }
 
-function buildUnwatchedList() {
-    var unwatchedShows = app.getUnwatchedShows();
+function buildUnwatchedList(unwatched) {
+    var unwatchedShows = app.getUnwatchedShows(unwatched);
+    var unwatchedEpisodes = app.getUnwatchedEpisodes(unwatched);
 
     unwatchedShows.sort(function(a, b) {
-        var pinA, pinB;
-
-        var dateA = app.getEpisodeDate(a.unwatchedEpisodesData[0].airDate);
-        var dateB = app.getEpisodeDate(b.unwatchedEpisodesData[0].airDate);
-
         if (app.options.pin) {
-            var pinA = app.getPinned(a.showId);
-            var pinB = app.getPinned(b.showId);
+            var pinA = app.getPinned(a.id);
+            var pinB = app.getPinned(b.id);
 
-            if (pinA && !pinB) {
-                return -1;
-            } else if (!pinA && pinB) {
-                return 1;
-            }
+            if (pinA && !pinB) return -1;
+            if (!pinA && pinB) return 1;
+            
         }
-        return dateB - dateA;
+        return 0;
     });
 
     var listPattern = document.getElementById('shows-list-tmp').innerHTML;
@@ -133,18 +125,21 @@ function buildUnwatchedList() {
     unwatchedList.innerHTML = '';
 
     unwatchedShows.forEach(function(show) {
-        var lastEpisode = show.unwatchedEpisodesData[show.unwatchedEpisodesData.length - 1];
+        var showEpisodes = unwatchedEpisodes.filter(function(e) {
+            return e.showId === show.id;
+        })
+        var lastEpisode = showEpisodes[showEpisodes.length - 1];
         var elementLi = document.createElement('li');
         var dataPattern = {
             title: app.getLocalizationTitle(show),
-            badge: show.unwatchedEpisodesData.length,
+            badge: showEpisodes.length,
             id: show.showId,
             seasonNum: app.numFormat(lastEpisode.seasonNumber),
-            episodeId: lastEpisode.episodeId,
+            episodeId: lastEpisode.id,
             episodeNum: app.numFormat(lastEpisode.episodeNumber),
             episodeTitle: lastEpisode.title,
             resources: app.getAllowedResources(app.options.resources),
-            pinned: app.getPinned(show.showId)
+            pinned: app.getPinned(show.id)
         };
 
         elementLi.innerHTML = app.fillPattern(listPattern, dataPattern);
@@ -152,7 +147,7 @@ function buildUnwatchedList() {
             e.preventDefault();
             showLoading();
 
-            api.checkEpisode(lastEpisode.episodeId)
+            api.checkEpisode(lastEpisode.id)
                     .then(function() {
                         refreshLists();
                         ga('send', 'event', 'button', 'mark', dataPattern.title, 1);
@@ -166,14 +161,14 @@ function buildUnwatchedList() {
 
 
         if (app.options.pin) {
-            setupPinFeature();        
+            setupPinFeature.call(elementLi, show.id);        
         }
 
         if (app.options.rate) {
-            setupRateFeature();
+            setupRateFeature.call(elementLi, lastEpisode.id);
         }
 
-        if (isShowRecent(show)) {
+        if (isShowRecent(lastEpisode)) {
             elementLi.classList.add('shows-recent');
         }
 
@@ -243,7 +238,7 @@ function buildEpisodesList() {
         group.forEach(function(episode) {
             var elementLi = document.createElement('li');
             var dataPattern = {
-                episodeId: episode.episodeId,
+                episodeId: episode.id,
                 title: episode.title,
                 seasonNum: app.numFormat(episode.seasonNumber),
                 episodeNum: app.numFormat(episode.episodeNumber),
@@ -255,7 +250,7 @@ function buildEpisodesList() {
             elementLi.querySelector('.shows-mark').addEventListener('click', function(e) {
                 e.preventDefault();
                 showLoading();
-                api.checkEpisode(episode.episodeId)
+                api.checkEpisode(episode.id)
                     .then(function() {
                         refreshLists();
                         ga('send', 'event', 'button', 'mark', dataPattern.title, 1);
@@ -380,8 +375,8 @@ function isMouseLeft(event) {
     }
 }
 
-function isShowRecent(show) {
-    return new Date() - app.getEpisodeDate(show.unwatchedEpisodesData[0].airDate) < 86400000 * 2;
+function isShowRecent(episode) {
+    return new Date() - Date.parse(episode.airDate) < 86400000 * 2;
 }
 
 // ==== SETUPS FEATURES
@@ -397,29 +392,33 @@ function setupGoogleAnalytics() {
     })
 }
     
-function setupPinFeature() {
+function setupPinFeature(showId) {
+    var elementLi = this;
     var pressTimer;
     var pinElement = elementLi.querySelector('.shows-title');
 
     pinElement.addEventListener('mousedown', function(event) {
         pressTimer = setTimeout(function() {
-            pinShows(show.showId);
+            console.log('PIN!')
+            pinShows(showId);
             buildUnwatchedList();
         }, 500)
     });
 
     ['mouseup', 'mousemove', 'mouseout'].forEach(function(eventName) {
         pinElement.addEventListener(eventName, function() {
+            console.log('pressTimer clean')
             clearTimeout(pressTimer);
         });
     });
 }
 
-function setupRateFeature() {
+function setupRateFeature(lastEpisodeId) {
+    var elementLi = this;
     elementLi.querySelector('.shows-rate').style.display = 'inline-block';
     elementLi.querySelector('.shows-rate').addEventListener('change', function(val) {
         showLoading();
-        api.rateEpisode(lastEpisode.episodeId, this.value)
+        api.rateEpisode(lastEpisodeId, this.value)
             .then(function() {
                 refreshLists();
             });
