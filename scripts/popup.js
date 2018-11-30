@@ -192,7 +192,7 @@ function buildEpisodesList() {
     if (show === undefined) {
         var view = activeView();
         if (view === $views.details) {
-            navigateView(view.main);
+            navigateView($views.main);
         }
         return;
     }
