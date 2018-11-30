@@ -16,24 +16,28 @@ var app = {
     },
     
     login: function(login, password) {
-        return api.authorize(login, password)
-            .then(function(res) {
-                return new Promise(function(resolve, reject) {
-                    var tokenData = {
-                        accessToken: res.access_token,
-                        refreshToken: res.refresh_token,
-                        tokenType: res.token_type
-                    };
-                    app.options.token = tokenData;
-                    app.setOptions({'token': tokenData }, resolve);
-                });
+        return api.token(login, password)
+            .then(function(res) {                
+                return app.setAuthorization(res);
             });
+    },
+
+    setAuthorization: function(res) {
+        return new Promise(function(resolve) {
+            var tokenData = {
+                accessToken: res.access_token,
+                refreshToken: res.refresh_token,
+                tokenType: res.token_type
+            };
+            app.options.token = tokenData;
+            app.setOptions({'token': tokenData }, resolve);
+        });
     },
 
     logout: function() {
         localStorage.clear();
         app.updateBadge('');
-        chrome.storage.sync.remove('auth');
+        chrome.storage.sync.clear();
     },
 
     // profile: function(callback) {
@@ -50,7 +54,7 @@ var app = {
 
     isAuthorized: function(callback) {
         chrome.storage.sync.get({ token: null }, function(options) {
-            callback(!!options.token);
+            callback(!!(options.token && options.token.accessToken));
         });
     },
 
@@ -105,7 +109,7 @@ var app = {
     },
 
     getUnwatchedShows: function(unwatched) {
-        unwatched = unwatched || app.getUnwatched();
+        unwatched = unwatched || app.getUnwatched() || [];
 
         return unwatched
             .map(function(u) { return u.show })
@@ -118,7 +122,7 @@ var app = {
     },
 
     getUnwatchedEpisodes: function(unwatched) {
-        unwatched = unwatched || app.getUnwatched();
+        unwatched = unwatched || app.getUnwatched() || [];
         return unwatched
             .map(function(u) { return u.episode })
             .sort(function(a, b) {

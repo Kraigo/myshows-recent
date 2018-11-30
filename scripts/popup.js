@@ -79,17 +79,23 @@ function authorize() {
             navigateView($views.main);
             refreshLists();
         })
-        .catch(function(err) {
-            if (err.status == 403) {
-                loginMessageElm.style.display = 'block';
-                loginMessageElm.innerHTML = app.getLocalization('INVALID_USERNAME_OR_PASSWORD');
-            } else if (err.status == 404) {
-                loginMessageElm.style.display = 'block';
-                loginMessageElm.innerHTML = app.getLocalization('FILL_ALL_FIELDS');
-            } else {
-                loginMessageElm.style.display = 'block';
-                loginMessageElm.innerHTML = app.getLocalization('UNEXPECTED_ERROR');
+        .catch(function(res) {
+            hideLoading();
+            var msg;
+            switch (res.error) {
+                case 'invalid_grant':
+                    msg = app.getLocalization('INVALID_USERNAME_OR_PASSWORD');
+                    break;
+                case 'invalid_request':
+                    msg = app.getLocalization('FILL_ALL_FIELDS');
+                    break;
+                default: {
+                    msg = res.error_description || app.getLocalization('UNEXPECTED_ERROR')
+                }
             }
+            
+            loginMessageElm.style.display = 'block';
+            loginMessageElm.innerHTML = msg;
         })
 }
 

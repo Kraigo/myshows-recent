@@ -1,5 +1,6 @@
 var api = {
     baseUrl: 'https://api.myshows.me',
+    authUrl: 'https://myshows.me/oauth/token',
     jsonrpcVersion: '2.0',
     clientId: 'myshows_kraigo',
     clientSecret: '',
@@ -28,7 +29,12 @@ var api = {
     
                     try {
                         var response = JSON.parse(xhr.response);
-                        resolve(response);
+
+                        if (xhr.status >= 200 && xhr.status < 400) {
+                            resolve(response);
+                        } else {
+                            reject(response);
+                        }
                     } catch(e) {
                         reject(xhr.response);
                     }
@@ -58,7 +64,8 @@ var api = {
             'Accept': 'application/json',
             'Accept-Language': 'en',
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + accessToken}
+            'Authorization': 'Bearer ' + accessToken
+        }
         var body =  JSON.stringify({
             jsonrpc: api.jsonrpcVersion,
             method: method,
@@ -66,13 +73,25 @@ var api = {
             id: 1
         });
 
-        // return api.submit("POST", url, body);
         return api.request("POST", url, body, headers)
             .then(function(response) {
                 if (!response.error) {
                     return Promise.resolve(response.result);
                 } else {                        
                     return Promise.reject(response.error);
+                }
+            })
+            .catch(function() {
+                if (app.options.token && app.options.token.refreshToken) {
+                    return api.refresh()
+                        .then(function(res) {
+                            app.setAuthorization(res);
+                            return api.fetch(method, params);
+                        })
+                        .catch(function() {
+                            app.logout();
+                            return Promise.reject();
+                        });
                 }
             });
     },
@@ -102,14 +121,26 @@ var api = {
         return urlEncodedDataPairs.join('&').replace(/%20/g, '+');
     },
 
-    authorize: function(username, password) {
-        var url = api.baseUrl + '/oauth/token';      
+    token: function(username, password) {
+        var url = api.authUrl;      
         var data = {
             'grant_type': 'password',
             'client_id': api.clientId,
             'client_secret': api.clientSecret,
             'username': username,
             'password': password
+        }
+        return api.submit("POST", url, data);
+    },
+
+    refresh: function() {
+        var refreshToken = app.options.token && app.options.token.refreshToken;
+        var url = api.authUrl;      
+        var data = {
+            'grant_type': 'refresh_token',
+            'client_id': api.clientId,
+            'client_secret': api.clientSecret,
+            'refresh_token': refreshToken
         }
         return api.submit("POST", url, data);
     },
