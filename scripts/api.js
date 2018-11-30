@@ -182,4 +182,13 @@ var api = {
         return api.fetch(method, params);
     },
 
+    show: function(showId) {
+        var method = 'shows.GetById';
+        var params = {
+            showId: showId,
+            withEpisodes: true
+        };
+        return api.fetch(method, params);
+    }
+
 }

@@ -216,6 +216,7 @@ body {
 .shows-header {
     position: relative;
     margin: 0 -10px;
+    background-color: #dcdcdc;
 }
 .shows-header .shows-title {
     position: absolute;
@@ -243,6 +244,12 @@ body {
 }
 .shows-header .shows-return:hover {
     background-color: rgba(0,0,0,0.1);
+}
+.shows-header img {
+    min-height: 130px;
+}
+.shows-header img.loaded {
+    animation: 0.3s fadeIn ease;
 }
 
 .icon,

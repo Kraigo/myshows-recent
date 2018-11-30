@@ -40,23 +40,6 @@ var app = {
     //     this.get('profile/', callback);
     // },
 
-    updateShows: function(callback) {
-        // TODO remove
-        return api.unwatchedShowsList()
-            .then(function(data) {
-                app.localSave('shows', data);
-                return data;
-            });
-    },
-    updateEpisodes: function(callback) {
-        // TODO remove
-        return api.unwatchedEpisodesList()
-            .then(function(data) {
-                app.localSave('unwatched', data);
-                return data;
-            });
-    },
-
     updateUnwatched: function() {
         return api.unwatchedEpisodesList()
             .then(function(data) {
@@ -117,8 +100,12 @@ var app = {
         chrome.storage.sync.set(options, callback);
     },
 
+    getUnwatched() {
+        return app.localGet('unwatched');
+    },
+
     getUnwatchedShows: function(unwatched) {
-        unwatched = unwatched || app.localGet('unwatched');
+        unwatched = unwatched || app.getUnwatched();
 
         return unwatched
             .map(function(u) { return u.show })
@@ -128,44 +115,10 @@ var app = {
                 })
                 return firstIndex == index
             });
-
-
-        //TODO remove
-
-        return result;
-        shows = shows || app.localGet('shows');
-        unwatched = unwatched || app.localGet('unwatched');
-        var result = [];
-
-        for (var i in unwatched) {
-            var episode = unwatched[i];
-            if (!shows[episode.showId].unwatchedEpisodesData) {
-                shows[episode.showId].unwatchedEpisodesData = [];
-            }
-            shows[episode.showId].unwatchedEpisodesData.unshift(episode);
-        }
-
-        for (var i in shows) {
-            var show = shows[i];
-            if (show.unwatchedEpisodesData && show.unwatchedEpisodesData.length > 0) {
-                result.push(show);
-            }
-        }
-
-        for (var i in result) {
-            // Sort Unwatched episodes by airDate
-            result[i].unwatchedEpisodesData.sort(function(a, b) {
-                var dateA = app.getEpisodeDate(a.airDate);
-                var dateB = app.getEpisodeDate(b.airDate);
-                return dateB - dateA;
-            })
-        }
-
-        return result;
     },
 
     getUnwatchedEpisodes: function(unwatched) {
-        unwatched = unwatched || app.localGet('unwatched');
+        unwatched = unwatched || app.getUnwatched();
         return unwatched
             .map(function(u) { return u.episode })
             .sort(function(a, b) {
@@ -218,12 +171,6 @@ var app = {
         return result;
     },
 
-    getEpisodeDate: function(date) {
-        // TODO remove
-        var res = date.match(/(\d{2})\.(\d{2})\.(\d{4})/);
-        return Date.parse(res[3] + '-' + res[2] + '-' + res[1]);
-    },
-
     getPinned: function(showId) {
         return this.options.pin && this.options.pinned.indexOf(showId) >= 0;
     },
@@ -263,26 +210,22 @@ var app = {
     },
 
     getLocalizationTitle: function(show) {
-        return app.options.language === 'ru' ? (show.ruTitle || show.title) : show.title
+        return app.options.language === 'en' ? (show.titleOriginal || show.title) : show.title
     },
     setLocalization: function(element) {
         var textnode;
+        var repKey;
         var language = app.options.language;
         var walk = document.createTreeWalker(element,NodeFilter.SHOW_TEXT, null, false);
         var localizationKeys = Object.keys(localization);
         while(textnode = walk.nextNode()) {
             localizationKeys.forEach(function(loc) {
-                textnode.nodeValue = textnode.nodeValue.replace('%' + loc + '%', localization[loc][language]);
+                repKey = '%' + loc + '%';
+                while (textnode.nodeValue.indexOf(repKey) >= 0) {
+                    textnode.nodeValue = textnode.nodeValue.replace(repKey, localization[loc][language]);
+                }
             })
         }
-    },
-    normalizeShows: function(data) {
-        // TODO remove
-        var shows = [];
-        for (var i in data) {
-            shows.push(data[i]);
-        }
-        return shows;
     },
 
     groupBy: function(data, key) {

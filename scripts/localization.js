@@ -159,7 +159,7 @@ var localization = {
     },
     //* FQ DOMAIN NAME*/
     DOMAIN: {
-        en: 'en.myshows.me',
-        ru: 'myshows.me'
+        en: 'https://en.myshows.me',
+        ru: 'https://myshows.me'
     }
 }

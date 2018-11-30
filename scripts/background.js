@@ -14,59 +14,44 @@ function checkNewEpisodes() {
         if (!auth) return;
 
         app.getOptions(function(options) {
-            Promise.all([
-                app.updateShows(),
-                app.updateEpisodes()
-            ]).then(function(res) {
-                var shows = res[0];
-                var unwatched = res[1];
 
-                if (options.notification && unwatched) {
-                    var newEpisodes = getNewEpisodes(unwatched);
-                    if (newEpisodes.length) {
-                        createNotification(shows, newEpisodes);
+            var localUnwatched = app.localGet('unwatched');
+
+            app.updateUnwatched()
+                .then(function(unwatched) {
+                    if (options.notification && unwatched) {
+                        var newItems = unwatched.filter(u => {
+                            return !localUnwatched.some(function(l) {
+                                return l.episode.id === u.episode.id;
+                            })
+                        });
+
+                        if (newItems.length) {
+                            createNotification(newItems);
+                        }
                     }
-                }
-                
-                if (options.badge && shows) {
-                    app.updateUnwatchedBadge();
-                }
-            })
+                    
+                    if (options.badge && unwatched) {
+                        app.updateUnwatchedBadge();
+                    }
+                })
         });
     });
 
     setTimeout(checkNewEpisodes, BACKGROUND_REFRESH_INTERVAL)
 }
 
-function getNewEpisodes(unwatched) {
-    var newEpisodes = [];
-    var localUnwatched = app.localGet('unwatched');
-    for (var i in unwatched) {
-        var matched = false;
-        for (var j in localUnwatched) {
-            if (unwatched[i].episodeId == localUnwatched[j].episodeId) {
-                matched = true;
-                break;
-            }
-        }
-        if (!matched) {
-            newEpisodes.push(unwatched[i]);
-        }
-    }
-    return newEpisodes;
-}
+function createNotification(newItems) {
+    if (newItems.length == 1) {
 
-function createNotification(shows, newEpisodes) {
-    if (newEpisodes.length == 1) {
-
-        var episode = newEpisodes[0];
-        var show = shows[episode.showId];
+        var episode = newItems[0].episode;
+        var show = newItems[0].show;
         var message = app.getLocalizationTitle(show) + '\n' +
             's' + app.numFormat(episode.seasonNumber) +
             'e' + app.numFormat(episode.episodeNumber) +
             ' ' + episode.title;
         var title = app.getLocalization('NEW_EPISODE');
-        var image = show.image;
+        var image = show.image.replace('https://', 'http://');
 
         app.notification('image', title, message, image);
 
@@ -74,9 +59,9 @@ function createNotification(shows, newEpisodes) {
 
         var items = [];
 
-        for (var i in newEpisodes) {
-            var episode = newEpisodes[i];
-            var show = shows[episode.showId];
+        for (var i in newItems) {
+            var episode = newItems[i].episode;
+            var show = newItems[i].show;
             items.push({
                 title: app.getLocalizationTitle(show),
                 message: 's' + app.numFormat(episode.seasonNumber) +
