@@ -1,3 +1,10 @@
+var $listNames = {
+    favorites: 'favorites',
+    ignored: 'ignored',
+    unwatched: 'unwatched',
+    next: 'next'
+}
+
 var api = {
     baseUrl: 'https://api.myshows.me',
     authUrl: 'https://myshows.me/oauth/token',
@@ -5,14 +12,6 @@ var api = {
     clientId: 'myshows_kraigo',
     clientSecret: 'nmpV1yf8Mg6H3WuhOp6WHadV',
     redirectUrl: 'myshows://oauth-callback/myshows',
-
-
-    listNames: {
-        favorites: 'favorites',
-        ignored: 'ignored',
-        unwatched: 'unwatched',
-        next: 'next',
-    },
 
     request: function(method, url, body, headers) {
         return new Promise(function(resolve, reject) {        
@@ -157,7 +156,7 @@ var api = {
     unwatchedShowsList: function() {
         var method = 'lists.Shows';
         var params = {
-            list: api.listNames.unwatched
+            list: $listNames.unwatched
         };
         return api.fetch(method, params);
     },
@@ -165,7 +164,7 @@ var api = {
     unwatchedEpisodesList: function() {
         var method = 'lists.Episodes';
         var params = {
-            list: api.listNames.unwatched
+            list: $listNames.unwatched
         };
         return api.fetch(method, params);
     },
@@ -173,7 +172,7 @@ var api = {
     watchedEpisodesList: function() {
         var method = 'lists.Episodes';
         var params = {
-            list: api.listNames.watched
+            list: $listNames.watched
         };
         return api.fetch(method, params);
     },
