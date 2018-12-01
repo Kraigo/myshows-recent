@@ -8,6 +8,12 @@ Convenient plug-in for quick access to http://myshows.me
 
 
 ## Last Changes
+
+v2.0.0
+- Использование новой версии Api MyShows 2
+- Авторизация больше не теряется
+- Оптимизация кода
+
 v1.7.1
 - Исправлена сортировка эпизодов
 
