@@ -8,6 +8,8 @@ Convenient plug-in for quick access to http://myshows.me
 
 
 ## Last Changes
+v2.0.1
+- Выбор цвета бейджа
 
 v2.0.0
 - Использование новой версии Api MyShows 2
