@@ -58,6 +58,7 @@ function init(chromeOptions) {
                 refreshLists();
             }
         } else {
+            app.logout();
             navigateView($views.login);
         }
     })

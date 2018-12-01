@@ -130,12 +130,12 @@ var app = {
     },
 
     getUnwatched() {
-        return app.localGet('unwatched');
+        var unwatched = app.localGet('unwatched');
+        return Array.isArray(unwatched) ? unwatched : [];
     },
 
     getUnwatchedShows: function(unwatched) {
-        unwatched = unwatched || app.getUnwatched() || [];
-
+        unwatched = unwatched || app.getUnwatched();
         return unwatched
             .map(function(u) { return u.show })
             .filter(function(s, index, arr) {
@@ -147,7 +147,7 @@ var app = {
     },
 
     getUnwatchedEpisodes: function(unwatched) {
-        unwatched = unwatched || app.getUnwatched() || [];
+        unwatched = unwatched || app.getUnwatched();
         return unwatched
             .map(function(u) { return u.episode })
             .sort(function(a, b) {
