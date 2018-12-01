@@ -3,7 +3,7 @@ var api = {
     authUrl: 'https://myshows.me/oauth/token',
     jsonrpcVersion: '2.0',
     clientId: 'myshows_kraigo',
-    clientSecret: '',
+    clientSecret: 'nmpV1yf8Mg6H3WuhOp6WHadV',
     redirectUrl: 'myshows://oauth-callback/myshows',
 
 
@@ -55,16 +55,16 @@ var api = {
     },
 
     fetch: function(method, params) {
-        var accessToken = app.options.token && app.options.token.accessToken;
+        var auth = app.getAuth();
 
-        if (!accessToken) return Promise.reject(null);
+        if (!auth) return Promise.reject('Auhtorization not provided');
 
         var url = api.baseUrl + '/v2/rpc/';
         var headers = {
             'Accept': 'application/json',
             'Accept-Language': 'en',
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + accessToken
+            'Authorization': 'Bearer ' + auth.accessToken
         }
         var body =  JSON.stringify({
             jsonrpc: api.jsonrpcVersion,
@@ -82,7 +82,7 @@ var api = {
                 }
             })
             .catch(function() {
-                if (app.options.token && app.options.token.refreshToken) {
+                if (app.getAuth()) {
                     return api.refresh()
                         .then(function(res) {
                             app.setAuthorization(res);
@@ -134,13 +134,13 @@ var api = {
     },
 
     refresh: function() {
-        var refreshToken = app.options.token && app.options.token.refreshToken;
+        var auth = app.getAuth();
         var url = api.authUrl;      
         var data = {
             'grant_type': 'refresh_token',
             'client_id': api.clientId,
             'client_secret': api.clientSecret,
-            'refresh_token': refreshToken
+            'refresh_token': auth.refreshToken
         }
         return api.submit("POST", url, data);
     },

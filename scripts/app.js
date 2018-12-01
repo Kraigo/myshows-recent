@@ -1,10 +1,9 @@
 var app = {
     options: null,
     defaultOptions: {
-        auth: null, // { login, password }
-        token: null,
+        auth: null, // {accessToken, refreshToken}
+        user: null,
         notification: true,
-        badge: true,
         rate: false,
         pin: true,
         resources: ['seasonvarru', 'hdrezkame'],
@@ -19,6 +18,12 @@ var app = {
         return api.token(login, password)
             .then(function(res) {                
                 return app.setAuthorization(res);
+            })
+            .then(function() {
+                return api.profile()
+            })
+            .then(function(res) {
+                app.setOptions({'user': res.user});
             });
     },
 
@@ -29,15 +34,15 @@ var app = {
                 refreshToken: res.refresh_token,
                 tokenType: res.token_type
             };
-            app.options.token = tokenData;
-            app.setOptions({'token': tokenData }, resolve);
+            app.options.auth = tokenData;
+            app.setOptions({'auth': tokenData }, resolve);
         });
     },
 
     logout: function() {
         localStorage.clear();
         app.updateBadge('');
-        chrome.storage.sync.clear();
+        chrome.storage.sync.remove(['auth', 'user', 'unwatched']);
     },
 
     // profile: function(callback) {
@@ -53,9 +58,16 @@ var app = {
     },
 
     isAuthorized: function(callback) {
-        chrome.storage.sync.get({ token: null }, function(options) {
-            callback(!!(options.token && options.token.accessToken));
+        chrome.storage.sync.get({ auth: null }, function(options) {
+            callback(!!app.getAuth(options));
         });
+    },
+
+    getAuth: function(options) {
+        options = options || app.options;
+        return options.auth && options.auth.accessToken
+            ? options.auth
+            : null;
     },
 
     localSave: function(key, data) {
@@ -85,9 +97,13 @@ var app = {
                 app.updateBadge(app.getUnwatchedEpisodes().length);
                 break;
             }
-            case 'shows':
-            default: {
+            case 'shows': {
                 app.updateBadge(app.getUnwatchedShows().length);
+                break;
+            }
+            case 'hide':
+            default: {
+                app.updateBadge();
                 break;
             }
         }
@@ -220,7 +236,7 @@ var app = {
         var textnode;
         var repKey;
         var language = app.options.language;
-        var walk = document.createTreeWalker(element,NodeFilter.SHOW_TEXT, null, false);
+        var walk = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
         var localizationKeys = Object.keys(localization);
         while(textnode = walk.nextNode()) {
             localizationKeys.forEach(function(loc) {
@@ -230,6 +246,14 @@ var app = {
                 }
             })
         }
+    },
+
+    setLocalizationDomain: function(element) {
+        var selector = '[data-domain-href]';
+        var domain = app.getLocalization('DOMAIN');
+        [].forEach.call(element.querySelectorAll(selector), function(a) {
+            a.setAttribute('href', domain);
+        })
     },
 
     groupBy: function(data, key) {

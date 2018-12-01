@@ -109,10 +109,6 @@ var localization = {
         en: 'Notify about new episodes',
         ru: 'Оповещать о новых эпизодах'
     },
-    DISPLAY_NUMBER_OF_NEW_SERIES: {
-        en: 'Display number of new series',
-        ru: 'Отображать количество новых сериалов'
-    },
     EVALUATE_VIEWED_EPISODES: {
         en: 'Rate watched episodes',
         ru: 'Оценивать просмотренные эпизоды'
@@ -148,6 +144,10 @@ var localization = {
     UNWATCHED_SHOWS: {
         en: 'Unwatched shows',
         ru: 'Непросмотренные сериалы'
+    },
+    HIDE_BADGE: {
+        en: 'Hide Badge',
+        ru: 'Скрыть бейдж'
     },
     BACK: {
         en: 'Back',

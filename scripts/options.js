@@ -1,7 +1,8 @@
 var customResources = [];
 
 function init() {
-    app.setLocalization(document.body);    
+    app.setLocalization(document.body);
+    app.setLocalizationDomain(document.body);
     restoreOptions();
 }
 
@@ -10,7 +11,6 @@ function saveOptions(e) {
     customCancel();
     var options = {
         notification: form.elements['notification'].checked,
-        badge: form.elements['badge'].checked,
         rate: form.elements['rate'].checked,
         pin: form.elements['pin'].checked,
         context: form.elements['context'].checked,
@@ -48,7 +48,6 @@ function saveOptions(e) {
 function restoreOptions() {
     app.getOptions(function(options) {
         form.elements['notification'].checked = options.notification;
-        form.elements['badge'].checked = options.badge;
         form.elements['rate'].checked = options.rate;
         form.elements['pin'].checked = options.pin;
         form.elements['context'].checked = options.context;

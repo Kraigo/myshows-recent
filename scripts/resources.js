@@ -1,8 +1,10 @@
-var $resources = [{
-        id: 'fsto',
-        title: 'Fs.to',
-        link: 'http://fs.to/video/serials/search.aspx?search='
-    }, {
+var $resources = [
+    // {
+    //     id: 'fsto',
+    //     title: 'Fs.to',
+    //     link: 'http://fs.to/video/serials/search.aspx?search='
+    // },
+    {
         id: 'exua',
         title: 'Ex.ua',
         link: 'http://www.ex.ua/search?s='

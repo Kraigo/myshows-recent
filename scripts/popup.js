@@ -11,6 +11,7 @@ function init(chromeOptions) {
     app.options = chromeOptions;
 
     app.setLocalization(document.body);
+    app.setLocalizationDomain(document.body);
 
     app.updateUnwatchedBadge();
 
@@ -42,11 +43,12 @@ function init(chromeOptions) {
     });
 
     app.isAuthorized(function(auth) {
-        // TODO update
         if (auth) {
-
-            var pr = app.options.language == 'ru' ? '' : app.options.language + '.';
-            document.getElementById('profileLink').setAttribute("href", 'https://' + pr + 'myshows.me/' + auth.login);
+            if (app.options.user) {
+                var domain = app.getLocalization('DOMAIN');
+                var user = app.options.user;
+                document.getElementById('profileLink').setAttribute("href", domain + '/' + user.login);
+            }
 
             navigateView($views.main);
 
@@ -96,6 +98,7 @@ function authorize() {
             
             loginMessageElm.style.display = 'block';
             loginMessageElm.innerHTML = msg;
+            console.error(res);
         })
 }
 
