@@ -137,6 +137,14 @@ var localization = {
         en: 'Show on badge',
         ru: 'Отображать на бейдже'
     },
+    BADGE_COLOR_CUSTOM: {
+        en: 'Custom badge color',
+        ru: 'Пользовательский цвет бейджа'
+    },
+    BADGE_COLOR: {
+        en: 'Badge color',
+        ru: 'Цвет бейджа'
+    },
     UNWATCHED_EPISODES: {
         en: 'Unwatched episodes',
         ru: 'Непросмотренные эпизоды'

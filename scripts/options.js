@@ -26,16 +26,18 @@ function saveOptions(e) {
             return resources;
         }(),
         customResources: customResources,
-        showOnBadge: getRadioListValue(form.elements['showOnBadge'])
+        showOnBadge: getRadioListValue(form.elements['showOnBadge']),
+        badgeColor: form.elements['badgeColorEnabled'].checked
+            ? form.elements['badgeColor'].value
+            : null
     };
     
-    chrome.storage.sync.set(options, function() {
-
+    app.setOptions(options, function() {
+        app.removeContextMenu();
+        app.updateUnwatchedBadge();
+        
         if (options.context) {
-            app.removeContextMenu();
             app.setContextMenu();
-        } else {
-            app.removeContextMenu();
         }
 
         document.getElementById('status').style.opacity = 1;
@@ -53,6 +55,9 @@ function restoreOptions() {
         form.elements['context'].checked = options.context;
         setRadioListValue(form.elements['language'], options.language);
         setRadioListValue(form.elements['showOnBadge'], options.showOnBadge);
+        form.elements['badgeColorEnabled'].checked = options.badgeColor;
+        form.elements['badgeColorEnabled'].dispatchEvent(new Event('change'));
+        form.elements['badgeColor'].value = options.badgeColor || '#3367d6';
 
         customResources = options.customResources;
 
@@ -154,6 +159,10 @@ function setRadioListValue(collection, value) {
     });
 }
 
+function toggleBadgeColorPicker(e) {
+    _badgeColorPicker.style.display = e.target.checked ? 'block' : 'none';
+}
+
 form.addEventListener('submit', saveOptions);
 
 var _customFields = document.getElementById('custom-fields');
@@ -170,6 +179,11 @@ var _customLink = document.getElementById('custom-link');
 _customAdd.addEventListener('click', customAdd);
 _customCancel.addEventListener('click', customCancel);
 _customSave.addEventListener('click', customSave);
+
+
+var _badgeColorCustom = document.querySelector('input[name=badgeColorEnabled]');
+var _badgeColorPicker = document.getElementById('badgeColorPicker');
+_badgeColorCustom.addEventListener('change', toggleBadgeColorPicker);
 
 
 document.addEventListener("DOMContentLoaded", function() {

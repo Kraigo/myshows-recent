@@ -11,7 +11,8 @@ var app = {
         pinned: [],
         language: navigator.language.substr(0,2) === 'ru' ? 'ru' : 'en',
         context: true,
-        showOnBadge: 'shows'
+        showOnBadge: 'shows',
+        badgeColor: null
     },
     
     login: function(login, password) {
@@ -83,9 +84,12 @@ var app = {
     },
 
     updateBadge: function(num) {
-        if (num)
+        if (num) {
             chrome.browserAction.setBadgeText({ text: num.toString() });
-        else {
+            chrome.browserAction.setBadgeBackgroundColor({
+                color: app.options.badgeColor || [0, 0, 0, 0]
+            });
+        } else {
             chrome.browserAction.setBadgeText({ text: '' });
         }
 
@@ -117,7 +121,12 @@ var app = {
     },
 
     setOptions: function(options, callback) {
-        chrome.storage.sync.set(options, callback);
+        chrome.storage.sync.set(options, function() {
+            for (var p in options) {
+                app.options[p] = options[p];
+            }
+            callback(app.options);
+        });
     },
 
     getUnwatched() {
