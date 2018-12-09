@@ -8,6 +8,9 @@ Convenient plug-in for quick access to http://myshows.me
 
 
 ## Last Changes
+v2.0.3
+- Фикс сортировки сериалов по даты выхода новых серий
+
 v2.0.2
 - Фикс миграции данных на новую версию
 
