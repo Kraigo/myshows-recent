@@ -111,13 +111,16 @@ function refreshLists() {
             hideLoading();
             buildUnwatchedList(unwatched);
             buildEpisodesList(unwatched);
+        })
+        .then(function() {            
+            app.updateUnwatchedBadge();
         });
 }
 
 function buildUnwatchedList(unwatched) {
     var unwatchedShows = app.getUnwatchedShows(unwatched);
     var unwatchedEpisodes = app.getUnwatchedEpisodes(unwatched);
-
+    
     unwatchedShows.sort(function(a, b) {
         if (app.options.pin) {
             var pinA = app.getPinned(a.id);
@@ -262,7 +265,7 @@ function buildEpisodesList() {
                 title: episode.title,
                 seasonNum: app.numFormat(episode.seasonNumber),
                 episodeNum: app.numFormat(episode.episodeNumber),
-                airDate: episode.airDate
+                airDate: app.dateFormat(episode.airDate, 'DD.MM.YYYY')
             };    
 
             elementLi.innerHTML = app.fillPattern(listPattern, dataPattern);   

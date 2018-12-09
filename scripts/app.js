@@ -79,8 +79,17 @@ var app = {
         return localStorage[key] ? JSON.parse(localStorage[key]) : false;
     },
 
-    numFormat: function(num) {
-        return ('00' + num.toString()).substr(num.toString().length);
+    numFormat: function(num, pad) {
+        return ((pad ||'00') + num.toString()).substr(num.toString().length);
+    },    
+
+    dateFormat: function(date, format) {
+        date = new Date(date);
+        format = format || 'DD.MM.YYYY';
+        return format
+            .replace('YYYY', date.getFullYear())
+            .replace('MM', app.numFormat(date.getMonth() + 1, '00'))
+            .replace('DD', app.numFormat(date.getDate(), '00'));
     },
 
     updateBadge: function(num) {
@@ -137,6 +146,11 @@ var app = {
     getUnwatchedShows: function(unwatched) {
         unwatched = unwatched || app.getUnwatched();
         return unwatched
+            .sort(function(a, b) {
+                var dateA = Date.parse(a.episode.airDate);
+                var dateB = Date.parse(b.episode.airDate);
+                return dateB - dateA;
+            })
             .map(function(u) { return u.show })
             .filter(function(s, index, arr) {
                 var firstIndex = arr.findIndex(function(a) {
