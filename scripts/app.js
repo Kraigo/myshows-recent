@@ -124,8 +124,8 @@ var app = {
 
     getOptions: function(callback) {
         chrome.storage.sync.get(app.defaultOptions, function(options) {
-            app.options = options;
-            callback(options);
+            app.options = options || app.defaultOptions;
+            callback(app.options);
         });
     },
 
