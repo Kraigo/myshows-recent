@@ -18,6 +18,7 @@ var app = {
 
     onInit: function() {
         this.defaultOptions.language = app.getCurrentLanguage();
+        this.defaultOptions.shownAnnounces = $announces.map(a => a.id);
     },
     
     login: function(login, password) {
