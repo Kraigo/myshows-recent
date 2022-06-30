@@ -32,7 +32,7 @@
         "default_popup": "popup.html"
     },
     "permissions": [
-        "http://api.myshows.ru/",
+        "https://api.myshows.me/",
         "http://media.myshows.me/",
         "notifications",
         "storage",

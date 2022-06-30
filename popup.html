@@ -58,6 +58,7 @@
                 <input type="text" id="searchInput" class="search-input">
                 <ul id="searchList" class="search-list"></ul>
             </div>
+            <div id="appAnnounces"></div>
         </div>
         
         <div class="view-content">
@@ -160,8 +161,16 @@
         </a>
     </script>
 
+    <script type="text/html" id="announce-tmp">
+        <div class="announce">
+            <div class="announce-text">{{text}}</div>
+            <button class="announce-close"></button>
+        </div>
+    </script>
+
     <script src="scripts/polyfills.js"></script>
     <script src="scripts/resources.js"></script>
+    <script src="scripts/announces.js"></script>
     <script src="scripts/localization.js"></script>
     <script src="scripts/api.js"></script>
     <script src="scripts/app.js"></script>

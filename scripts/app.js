@@ -6,13 +6,18 @@ var app = {
         notification: true,
         rate: false,
         pin: true,
-        resources: ['seasonvarru', 'hdrezkame'],
+        resources: ['hdrezka'],
         customResources: [],
         pinned: [],
-        language: navigator.language.substr(0,2) === 'ru' ? 'ru' : 'en',
+        language: 'en',
         context: true,
         showOnBadge: 'shows',
-        badgeColor: null
+        badgeColor: null,
+        shownAnnounces: []
+    },
+
+    onInit: function() {
+        this.defaultOptions.language = app.getCurrentLanguage();
     },
     
     login: function(login, password) {
@@ -134,7 +139,9 @@ var app = {
             for (var p in options) {
                 app.options[p] = options[p];
             }
-            callback(app.options);
+            if (typeof callback === 'function') {
+                callback(app.options);
+            }
         });
     },
 
@@ -248,6 +255,19 @@ var app = {
         return pattern;
     },
 
+    getCurrentLanguage: function() {
+        switch (navigator.language) {
+            case 'ru': 
+                return 'ru';
+            case 'ua':
+            case 'uk':
+                return 'ua';
+            case 'uk':
+            default:
+                return 'en';
+        }
+    },
+
     getLocalization: function(localizationKey) {
         return localization[localizationKey][app.options.language];
     },
@@ -298,13 +318,23 @@ var app = {
             "contexts": ["selection"],
             "onclick" : function(e) {
                 chrome.tabs.create({
-                    url: 'https://myshows.me/search/?q=' + e.selectionText
+                    url: app.getLocalization('DOMAIN') + '/search/?q=' + e.selectionText
                 })
             }
         });
     },
     removeContextMenu: function() {
         chrome.contextMenus.remove('search')
+    },
+    hideAnnounce: function(id, callback) {
+        const isShown = app.options.shownAnnounces.includes(id);
+        if (!isShown) {
+            app.setOptions({
+                'shownAnnounces': [].concat(app.options.shownAnnounces).concat([id])
+            }, callback);
+        }
     }
 
 };
+
+app.onInit();

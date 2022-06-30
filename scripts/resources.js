@@ -28,9 +28,9 @@ var $resources = [
     //     link: 'https://kat.cr/usearch/'
     // },
     {
-        id: 'hdrezkame',
+        id: 'hdrezka',
         title: 'Hdrezka',
-        link: 'http://hdrezka.ag/index.php?do=search&subaction=search&q='
+        link: 'https://rezka.ag/search/?do=search&subaction=search&q='
     }, {
         id: 'seasonvarru',
         title: 'Seasonvar',

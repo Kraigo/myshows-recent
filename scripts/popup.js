@@ -54,6 +54,7 @@ function init(chromeOptions) {
 
             if (app.localGet('unwatched')) {
                 buildUnwatchedList();
+                buildAnnounces();
             } else {
                 refreshLists();
             }
@@ -115,6 +116,33 @@ function refreshLists() {
         .then(function() {            
             app.updateUnwatchedBadge();
         });
+}
+
+function buildAnnounces() {
+    var announcePattern = document.getElementById('announce-tmp').innerHTML;
+    var appAnnounces = document.getElementById('appAnnounces');
+
+    appAnnounces.innerHTML = '';
+    
+    for (let announce of $announces) {
+        const isShown = app.options.shownAnnounces.includes(announce.id);
+        if (isShown) {
+            continue;
+        }
+        appAnnounces.innerHTML = app.fillPattern(announcePattern, {
+            text: announce.text[app.options.language]
+        });
+
+        appAnnounces.querySelector('.announce-close')
+            .addEventListener('click', () => {
+                app.hideAnnounce(announce.id, () => {
+                    buildAnnounces()
+                });
+            });
+
+        break;
+    }
+
 }
 
 function buildUnwatchedList(unwatched) {
@@ -227,6 +255,7 @@ function buildEpisodesList() {
 
     episodesList.innerHTML = '';
     showEpisodesHeader.innerHTML = '';
+    appAnnounces.innerHTML = '';
 
     showEpisodesHeader.innerHTML = app.fillPattern(listHeaderPattern, {
         showId: show.id,

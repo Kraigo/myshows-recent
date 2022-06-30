@@ -61,7 +61,7 @@ var api = {
         var url = api.baseUrl + '/v2/rpc/';
         var headers = {
             'Accept': 'application/json',
-            'Accept-Language': 'en',
+            'Accept-Language': app.options.language,
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + auth.accessToken
         }
