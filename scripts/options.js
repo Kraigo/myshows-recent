@@ -187,5 +187,5 @@ _badgeColorCustom.addEventListener('change', toggleBadgeColorPicker);
 
 
 document.addEventListener("DOMContentLoaded", function() {
-    app.getOptions(init);
+    app.initialize(init);
 });

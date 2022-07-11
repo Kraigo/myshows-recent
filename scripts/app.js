@@ -9,16 +9,11 @@ var app = {
         resources: ['hdrezka'],
         customResources: [],
         pinned: [],
-        language: 'en',
+        language: null,
         context: true,
         showOnBadge: 'shows',
         badgeColor: null,
         shownAnnounces: []
-    },
-
-    onInit: function() {
-        this.defaultOptions.language = app.getCurrentLanguage();
-        this.defaultOptions.shownAnnounces = $announces.map(a => a.id);
     },
     
     login: function(login, password) {
@@ -128,10 +123,26 @@ var app = {
         }
     },
 
+    initialize: function(callback) {
+        app.getOptions(function(options) {
+            if (!options.language) {
+                app.setOptions({
+                    language: app.getCurrentLanguage(),
+                    shownAnnounces: $announces.map(a => a.id)
+                }, callback)
+            } else if (typeof callback === 'function') {
+                callback(options);
+            }
+        })
+    },
+
     getOptions: function(callback) {
         chrome.storage.sync.get(app.defaultOptions, function(options) {
             app.options = options || app.defaultOptions;
-            callback(app.options);
+            
+            if (typeof callback === 'function') {
+                callback(app.options);
+            }
         });
     },
 
@@ -337,5 +348,3 @@ var app = {
     }
 
 };
-
-app.onInit();

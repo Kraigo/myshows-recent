@@ -79,7 +79,7 @@ function createNotification(newItems) {
 
 
 // # # #
-app.getOptions(init)
+app.initialize(init)
 
 
 chrome.runtime.onMessage.addListener(function(msg) {

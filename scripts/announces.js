@@ -1,6 +1,6 @@
 var $announces = [
     {
-        id: "ukrainian-language-added",
+        id: "ukrainian-language-added2",
         text: {
             en: "The Ukrainian language is now available! You can change it through the settings.",
             ru: "Теперь доступен украинский язык! Можно поменять через настройки.",

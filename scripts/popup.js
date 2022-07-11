@@ -481,5 +481,5 @@ function setupRateFeature(lastEpisodeId) {
 //
 
 document.addEventListener("DOMContentLoaded", function() {
-    app.getOptions(init);
+    app.initialize(init);
 });
