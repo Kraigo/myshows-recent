@@ -8,6 +8,9 @@ Convenient plug-in for quick access to http://myshows.me
 
 
 ## Last Changes
+v2.1.1
+- Фикс анонса
+
 v2.1.0
 - Добавил украинский язык
 - Анонсы новых обновлений прямо в приложении
