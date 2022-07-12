@@ -268,7 +268,8 @@ var app = {
     },
 
     getCurrentLanguage: function() {
-        switch (navigator.language) {
+        const language = navigator.language.slice(0, 2)
+        switch (language) {
             case 'ru': 
                 return 'ru';
             case 'ua':

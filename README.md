@@ -8,6 +8,10 @@ Convenient plug-in for quick access to http://myshows.me
 
 
 ## Last Changes
+v2.1.2
+- Fix language code
+- Fix [Issue#2](https://github.com/Kraigo/myshows-recent/issues/2)
+
 v2.1.1
 - Фикс анонса
 
