@@ -275,7 +275,7 @@ var app = {
             case 'ua':
             case 'uk':
                 return 'ua';
-            case 'uk':
+            case 'en':
             default:
                 return 'en';
         }

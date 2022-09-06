@@ -167,10 +167,11 @@ function buildUnwatchedList(unwatched) {
 
     unwatchedShows.forEach(function(show) {
         var showEpisodes = unwatchedEpisodes
-            .filter(function(e) {
-                return e.showId === show.id;
-            })
-            .sort((a, b) => b.episodeNumber - a.episodeNumber);
+            .filter((e) => e.showId === show.id)
+            .filter((e) => !e.isSpecial)
+            .sort((a, b) =>
+                b.seasonNumber - a.seasonNumber ||
+                b.episodeNumber - a.episodeNumber);
 
         var lastEpisode = showEpisodes[showEpisodes.length - 1];
         var elementLi = document.createElement('li');
