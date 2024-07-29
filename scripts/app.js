@@ -3,6 +3,7 @@ var app = {
     defaultOptions: {
         auth: null, // {accessToken, refreshToken}
         user: null,
+        tempUserId: null,
         notification: true,
         rate: false,
         pin: true,
@@ -42,7 +43,7 @@ var app = {
     },
 
     logout: function() {
-        localStorage.clear();
+        chrome.storage.local.clear() 
         app.updateBadge('');
         chrome.storage.sync.remove(['auth', 'user', 'unwatched']);
     },
@@ -54,8 +55,10 @@ var app = {
     updateUnwatched: function() {
         return api.unwatchedEpisodesList()
             .then(function(data) {
-                app.localSave('unwatched', data);
-                return data;
+                return persistent.update('unwatched', JSON.stringify(data))
+                    .then(function() {
+                        return data;
+                    });
             });
     },
 
@@ -70,14 +73,6 @@ var app = {
         return options.auth && options.auth.accessToken
             ? options.auth
             : null;
-    },
-
-    localSave: function(key, data) {
-        localStorage[key] = JSON.stringify(data);
-    },
-
-    localGet: function(key) {
-        return localStorage[key] ? JSON.parse(localStorage[key]) : false;
     },
 
     numFormat: function(num, pad) {
@@ -95,12 +90,12 @@ var app = {
 
     updateBadge: function(num) {
         if (num) {
-            chrome.browserAction.setBadgeText({ text: num.toString() });
-            chrome.browserAction.setBadgeBackgroundColor({
+            chrome.action.setBadgeText({ text: num.toString() });
+            chrome.action.setBadgeBackgroundColor({
                 color: app.options.badgeColor || [0, 0, 0, 0]
             });
         } else {
-            chrome.browserAction.setBadgeText({ text: '' });
+            chrome.action.setBadgeText({ text: '' });
         }
 
     },    
@@ -158,7 +153,8 @@ var app = {
     },
 
     getUnwatched() {
-        var unwatched = app.localGet('unwatched');
+        var data = persistent.valueLocal('unwatched');
+        var unwatched = data ? JSON.parse(data) : null;
         return Array.isArray(unwatched) ? unwatched : [];
     },
 
@@ -328,12 +324,7 @@ var app = {
         chrome.contextMenus.create({
             "id": "search",
             "title": app.getLocalization('SEARCH_CONTEXT_MENU'),
-            "contexts": ["selection"],
-            "onclick" : function(e) {
-                chrome.tabs.create({
-                    url: app.getLocalization('DOMAIN') + '/search/?q=' + e.selectionText
-                })
-            }
+            "contexts": ["selection"]
         });
     },
     removeContextMenu: function() {

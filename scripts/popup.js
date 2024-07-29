@@ -51,13 +51,16 @@ function init(chromeOptions) {
             }
 
             navigateView($views.main);
-
-            if (app.localGet('unwatched')) {
-                buildUnwatchedList();
-                buildAnnounces();
-            } else {
-                refreshLists();
-            }
+            
+            persistent.value('unwatched')
+                .then(function(unwatched) {
+                    if (unwatched) {
+                        buildUnwatchedList();
+                        buildAnnounces();
+                    } else {
+                        refreshLists();
+                    }
+                })
         } else {
             app.logout();
             navigateView($views.login);
@@ -195,7 +198,7 @@ function buildUnwatchedList(unwatched) {
             api.checkEpisode(lastEpisode.id)
                     .then(function() {
                         refreshLists();
-                        ga('send', 'event', 'button', 'mark', dataPattern.title, 1);
+                        sendAnalyticEvent('button_mark_clicked', {title: dataPattern.title});
                     });
         });
 
@@ -309,7 +312,7 @@ function buildEpisodesList() {
                 api.checkEpisode(episode.id)
                     .then(function() {
                         refreshLists();
-                        ga('send', 'event', 'button', 'mark', dataPattern.title, 1);
+                        sendAnalyticEvent('button_mark_clicked', {title: dataPattern.title});
                     });
             });
             
@@ -337,6 +340,8 @@ function navigateView(viewName, param) {
             elm.setAttribute('data-param', '');
         }
     }
+
+    sendAnalyticEvent('page_view', { viewName });
 }
 
 function viewParam() {
@@ -367,7 +372,9 @@ function pinShows(id) {
         app.options.pinned.splice(pinIndex, 1);
     }
     app.setOptions({ pinned: app.options.pinned });
-    ga('send', 'event', 'press', 'pin');
+
+    var isPinned = app.options.pinned.indexOf(id) >= 0;
+    sendAnalyticEvent('pin', { pinned: isPinned });
 }
 
 function toggleSearchView() {
@@ -378,6 +385,8 @@ function toggleSearchView() {
     searchInput.value = '';
     searchInput.focus();
     searchList.innerHTML = '';
+    
+    sendAnalyticEvent('toggle_search');
     
 }
 function search(q) {
@@ -446,7 +455,7 @@ function setupGoogleAnalytics() {
 
     [].forEach.call(resourceLinks, function(link) {
         link.addEventListener('click', function() {
-            ga('send', 'event', 'link', 'resource', link.getAttribute('href'), 1);
+            sendAnalyticEvent('link_resource_clicked', {href: link.getAttribute('href')});
         })
     })
 }
@@ -463,7 +472,7 @@ function setupPinFeature(showId) {
         }, 500)
     });
 
-    ['mouseup', 'mousemove', 'mouseout'].forEach(function(eventName) {
+    ['mouseup', 'mouseout', 'mouseleave'].forEach(function(eventName) {
         pinElement.addEventListener(eventName, function() {
             clearTimeout(pressTimer);
         });
@@ -485,5 +494,6 @@ function setupRateFeature(lastEpisodeId) {
 //
 
 document.addEventListener("DOMContentLoaded", function() {
+    persistent.initialize(['unwatched']);
     app.initialize(init);
 });

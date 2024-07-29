@@ -3,38 +3,41 @@
     "version": "2.1.3",
     "default_locale": "ru",
     "author": "Kraigo",
-
-    "manifest_version": 2,
-
+    
+    "manifest_version": 3,
+    
     "background": {
-        "page": "background.html",
-        "persistent": true
+        "service_worker": "scripts/background.js"
     },
-
-    "options_page": "options.html",
+    
     "options_ui": {
-        "chrome_style": true,
-        "page": "options.html"
+        "page": "options.html",
+        "open_in_tab": true
     },
-
+    
     "description": "__MSG_appDesc__",
     "icons": {
         "16": "images/icon-16.png",
         "48": "images/icon-48.png",
         "128": "images/icon-128.png"
     },
-    "browser_action": {
+    "action": {
         "default_icon": "images/icon-16.png",
         "default_title": "__MSG_appTitle__",
         "default_popup": "popup.html"
     },
     "permissions": [
-        "https://api.myshows.me/",
-        "https://media.myshows.me/",
-        "https://myshows.me/",
         "notifications",
         "storage",
         "contextMenus"
     ],
-    "content_security_policy": "script-src 'self' https://www.google-analytics.com; object-src 'self'"
+    "host_permissions": [
+        "https://api.myshows.me/",
+        "https://media.myshows.me/",
+        "https://myshows.me/",
+        "https://www.google-analytics.com/collect"
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self';"
+    }
 }

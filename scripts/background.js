@@ -1,3 +1,18 @@
+try {
+    importScripts(
+        '/scripts/polyfills.js',
+        '/scripts/resources.js',
+        '/scripts/announces.js',
+        '/scripts/localization.js',
+        '/scripts/persistent.js',
+        '/scripts/api.js',
+        '/scripts/app.js',
+    );
+} catch (e) {
+    console.error(e);
+}
+
+
 var BACKGROUND_REFRESH_INTERVAL = 2700000;
 
 function init() {
@@ -15,26 +30,28 @@ function checkNewEpisodes() {
 
         app.getOptions(function(options) {
 
-            var localUnwatched = app.localGet('unwatched');
+            persistent.value('unwatched')
+                .then(function(localUnwatched) {
 
-            app.updateUnwatched()
-                .then(function(unwatched) {
-                    if (options.notification && unwatched) {
-                        var newItems = unwatched.filter(u => {
-                            return !localUnwatched.some(function(l) {
-                                return l.episode.id === u.episode.id;
-                            })
+                    app.updateUnwatched()
+                        .then(function(unwatched) {
+                            if (options.notification && unwatched) {
+                                var newItems = unwatched.filter(u => {
+                                    return !localUnwatched.some(function(l) {
+                                        return l.episode.id === u.episode.id;
+                                    })
+                                });
+        
+                                if (newItems.length) {
+                                    createNotification(newItems);
+                                }
+                            }
+                            
+                            if (options.badge && unwatched) {
+                                app.updateUnwatchedBadge();
+                            }
                         });
-
-                        if (newItems.length) {
-                            createNotification(newItems);
-                        }
-                    }
-                    
-                    if (options.badge && unwatched) {
-                        app.updateUnwatchedBadge();
-                    }
-                })
+                });
         });
     });
 
@@ -81,11 +98,12 @@ function createNotification(newItems) {
 // # # #
 app.initialize(init)
 
-
 chrome.runtime.onMessage.addListener(function(msg) {
     console.log(msg);
 });
 
-
-  
-
+chrome.contextMenus.onClicked.addListener(function(e) {
+    chrome.tabs.create({
+        url: app.getLocalization('DOMAIN') + '/search/?q=' + e.selectionText
+    });
+});

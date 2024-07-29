@@ -133,6 +133,11 @@ body {
     font-weight: normal;
     display: inline-block;
     margin: 0;
+    
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
 }
 
 .shows-title.pinned {
