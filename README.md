@@ -8,6 +8,10 @@ Convenient plug-in for quick access to http://myshows.me
 
 
 ## Last Changes
+v2.2.0
+- updated to manifest v3
+- fixed long episode name
+
 v2.1.3
 - Fix sorting by season first
 - Fix default language
