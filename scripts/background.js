@@ -31,7 +31,8 @@ function checkNewEpisodes() {
         app.getOptions(function(options) {
 
             persistent.value('unwatched')
-                .then(function(localUnwatched) {
+                .then(function(unwatched) {
+                    var localUnwatched = unwatched ? JSON.parse(unwatched) : [];
 
                     app.updateUnwatched()
                         .then(function(unwatched) {
@@ -68,7 +69,7 @@ function createNotification(newItems) {
             'e' + app.numFormat(episode.episodeNumber) +
             ' ' + episode.title;
         var title = app.getLocalization('NEW_EPISODE');
-        var image = show.image.replace('https://', 'http://');
+        var image = show.image;
 
         app.notification('image', title, message, image);
 

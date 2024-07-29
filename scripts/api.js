@@ -14,34 +14,11 @@ var api = {
     redirectUrl: 'myshows://oauth-callback/myshows',
 
     request: function(method, url, body, headers) {
-        return new Promise(function(resolve, reject) {        
-            var xhr = new XMLHttpRequest();
-            xhr.open(method, url, true);
-    
-            for (var key in headers) {
-                xhr.setRequestHeader(key, headers[key]);
-            }
-            
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4) {
-                    if (!xhr.status) return;
-    
-                    try {
-                        var response = JSON.parse(xhr.response);
-
-                        if (xhr.status >= 200 && xhr.status < 400) {
-                            resolve(response);
-                        } else {
-                            reject(response);
-                        }
-                    } catch(e) {
-                        reject(xhr.response);
-                    }
-                }
-            }
-            
-            xhr.send(body);
-        });
+        return fetch(url, {
+            method: method,
+            body: body,
+            headers: headers
+        }).then(res => res.json())
     },
 
     submit: function(method, url, data) {
@@ -56,7 +33,7 @@ var api = {
     fetch: function(method, params) {
         var auth = app.getAuth();
 
-        if (!auth) return Promise.reject('Auhtorization not provided');
+        if (!auth) return Promise.reject('Authorization not provided');
 
         var url = api.baseUrl + '/v2/rpc/';
         var headers = {

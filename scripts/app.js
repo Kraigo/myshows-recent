@@ -190,7 +190,7 @@ var app = {
         var msgOptions = {
             type: type,
             title: title,
-            iconUrl: 'images/icon-128.png'
+            iconUrl: '/images/icon-128.png'
         };
 
         if (type == 'list') {

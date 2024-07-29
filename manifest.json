@@ -33,9 +33,8 @@
     ],
     "host_permissions": [
         "https://api.myshows.me/",
-        "https://media.myshows.me/",
-        "https://myshows.me/",
-        "https://www.google-analytics.com/collect"
+        "https://media.myshows.me/*",
+        "https://myshows.me/"
     ],
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self';"

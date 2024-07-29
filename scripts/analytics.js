@@ -3,7 +3,11 @@ const ANALYTICS_ID = 'G-3BGRH658JQ';
 const API_SECRET = 'I1F1GK74Tp61P30zRbE4FQ';
 const DEFAULT_ENGAGEMENT_TIME_MSEC = 100;
 
-async function sendAnalyticEvent(name, params = {}) {
+function sendAnalyticEvent(name, params = {}) {
+    // Placeholder
+}
+
+async function fireEvent(name, params = {}) {
     const clientId = await getUserIdPromise();
     if (!params.session_id) {
         params.session_id = clientId;
