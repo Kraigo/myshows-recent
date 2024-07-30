@@ -1,7 +1,7 @@
 {
     "name": "__MSG_appName__",
-    "version": "2.2.0",
-    "default_locale": "ru",
+    "version": "2.2.1",
+    "default_locale": "uk",
     "author": "Kraigo",
     
     "manifest_version": 3,

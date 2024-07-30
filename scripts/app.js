@@ -123,7 +123,9 @@ var app = {
             if (!options.language) {
                 app.setOptions({
                     language: app.getCurrentLanguage(),
-                    shownAnnounces: $announces.map(a => a.id)
+                    shownAnnounces: $announces
+                        .filter(a => !a.forAll)
+                        .map(a => a.id)
                 }, callback)
             } else if (typeof callback === 'function') {
                 callback(options);

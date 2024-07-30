@@ -478,9 +478,12 @@ h4 {
     transition: all 0.3s ease;
 }
 
-.container-options {
+.container-boundary {
     max-width: 450px;
     margin: 0 auto;
+}
+
+.container-options {
     background-color: #fff;
     padding-bottom: 50px;
     position: relative;

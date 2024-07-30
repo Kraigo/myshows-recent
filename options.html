@@ -8,7 +8,7 @@
 </head>
 
 <body bgcolor="#eeeeee">
-    <div class="container container-options ">
+    <div class="container container-options container-boundary">
         <form name="form">
 
             <h4>%GENERAL_SETTINGS%</h4>
@@ -138,8 +138,10 @@
             <p><small>* %CHANGES_WILL_TAKE_EFFECT_ONLY_AFTER_SAVING%</small></p>
 
             <div class="container-options-footer text-right">
-                <span id="status" class="options-status">%SETTINGS_HAVE_BEEN_SAVED%</span>
-                <button type="submit" />%SAVE%</input>
+                <div class="container-boundary">
+                    <span id="status" class="options-status">%SETTINGS_HAVE_BEEN_SAVED%</span>
+                    <button type="submit" />%SAVE%</input>
+                </div>
             </div>
 
         </form>

@@ -41,6 +41,9 @@ function init(chromeOptions) {
             }
         }, 400);
     });
+    document.getElementById('settingsBtn').addEventListener('click', function() {
+        chrome.runtime.openOptionsPage(function() {});
+    })
 
     app.isAuthorized(function(auth) {
         if (auth) {

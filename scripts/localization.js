@@ -201,6 +201,11 @@ var localization = {
         ru: 'Назад',
         ua: 'Назад',
     },
+    SETTINGS: {
+        en: 'Settings',
+        ru: 'Настройки',
+        ua: 'Налаштування',
+    },
     UNEXPECTED_ERROR: {
         en: 'Unexpected error',
         ru: 'Произошла неожиданны ошибка',

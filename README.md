@@ -8,6 +8,10 @@ Convenient plug-in for quick access to http://myshows.me
 
 
 ## Last Changes
+v2.2.1
+- settings button
+- added announce
+
 v2.2.0
 - updated to manifest v3
 - fixed long episode name
