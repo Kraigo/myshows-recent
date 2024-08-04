@@ -9,19 +9,26 @@ try {
         '/scripts/app.js',
     );
 } catch (e) {
-    console.error(e);
 }
 
-
 var BACKGROUND_REFRESH_INTERVAL = 45 * 60 * 1000; // 45 min
+var startTimer;
+var intervalTimer;
 
 function init() {
+    console.log('Background initialized');
     checkNewEpisodes();
-    setInterval(checkNewEpisodes, BACKGROUND_REFRESH_INTERVAL);
+    app.updateContextMenu();
+    app.updateUnwatchedBadge();
+    stopBackground();
 
-    if (app.options.context) {
-        app.setContextMenu();
-    }
+    startTimer = setTimeout(checkNewEpisodes, 100);
+    intervalTimer = setInterval(checkNewEpisodes, BACKGROUND_REFRESH_INTERVAL);
+}
+
+function stopBackground() {
+    clearInterval(intervalTimer);
+    clearTimeout(startTimer);
 }
 
 function checkNewEpisodes() {
@@ -49,7 +56,7 @@ function checkNewEpisodes() {
                                 }
                             }
                             
-                            if (options.badge && unwatched) {
+                            if (options.badge) {
                                 app.updateUnwatchedBadge();
                             }
                         });
@@ -96,10 +103,24 @@ function createNotification(newItems) {
 
 
 // # # #
-app.initialize(init)
+chrome.runtime.onInstalled.addListener(function() {
+    app.initialize(init);
+});
 
-chrome.runtime.onMessage.addListener(function(msg) {
-    console.log(msg);
+chrome.runtime.onStartup.addListener(function() {
+    app.initialize(init);
+});
+
+chrome.runtime.onUpdateAvailable.addListener(function() {
+    app.initialize(init);
+});
+
+chrome.runtime.onRestartRequired.addListener(function() {
+    app.initialize(init);
+});
+
+chrome.runtime.onSuspend.addListener(function() {
+    stopBackground();
 });
 
 chrome.contextMenus.onClicked.addListener(function(e) {

@@ -57,8 +57,8 @@ function init(chromeOptions) {
 
             persistent.value('unwatched')
                 .then(function() {
-                    buildUnwatchedList();
                     buildAnnounces();
+                    buildUnwatchedList();
                 })
 
             if (app.options.autoRefresh) {
@@ -119,6 +119,7 @@ function refreshLists() {
             hideLoading();
             buildUnwatchedList(unwatched);
             buildEpisodesList(unwatched);
+            buildAnnounces();
         })
         .then(function() {            
             app.updateUnwatchedBadge();

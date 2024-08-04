@@ -102,26 +102,27 @@ var app = {
     },    
 
     updateUnwatchedBadge: function() {
-        persistent.value('unwatched').then(function(data) {
-            var unwatched = data ? JSON.parse(data) : [];
-            switch(app.options.showOnBadge) {
-                case 'episodes': {
-                    var count = app.getUnwatchedEpisodes(unwatched).length;
-                    app.updateBadge(count);
-                    break;
+        persistent.value('unwatched')
+            .then(function(data) {
+                var unwatched = data ? JSON.parse(data) : [];
+                switch(app.options.showOnBadge) {
+                    case 'episodes': {
+                        var count = app.getUnwatchedEpisodes(unwatched).length;
+                        app.updateBadge(count);
+                        break;
+                    }
+                    case 'shows': {
+                        var count = app.getUnwatchedShows(unwatched).length;
+                        app.updateBadge(count);
+                        break;
+                    }
+                    case 'hide':
+                    default: {
+                        app.updateBadge();
+                        break;
+                    }
                 }
-                case 'shows': {
-                    var count = app.getUnwatchedShows(unwatched).length;
-                    app.updateBadge(count);
-                    break;
-                }
-                case 'hide':
-                default: {
-                    app.updateBadge();
-                    break;
-                }
-            }
-        });
+            });
     },
 
     initialize: function(callback) {
@@ -328,15 +329,15 @@ var app = {
         });
     },
 
-    setContextMenu: function() {
-        chrome.contextMenus.create({
-            "id": "search",
-            "title": app.getLocalization('SEARCH_CONTEXT_MENU'),
-            "contexts": ["selection"]
-        });
-    },
-    removeContextMenu: function() {
-        chrome.contextMenus.remove('search')
+    updateContextMenu: function() {
+        chrome.contextMenus.removeAll(function() {
+            chrome.contextMenus.create({
+                'id': 'search',
+                'visible': app.options.context,
+                'title': app.getLocalization('SEARCH_CONTEXT_MENU'),
+                'contexts': ["selection"]
+            })
+        })
     },
     hideAnnounce: function(id, callback) {
         const isShown = app.options.shownAnnounces.includes(id);

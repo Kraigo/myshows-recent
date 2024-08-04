@@ -34,12 +34,8 @@ function saveOptions(e) {
     };
     
     app.setOptions(options, function() {
-        app.removeContextMenu();
         app.updateUnwatchedBadge();
-        
-        if (options.context) {
-            app.setContextMenu();
-        }
+        app.updateContextMenu();
 
         document.getElementById('status').style.opacity = 1;
         setTimeout(function() {
