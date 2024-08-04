@@ -8,6 +8,12 @@ Convenient plug-in for quick access to http://myshows.me
 
 
 ## Last Changes
+v2.2.2
+- auto refresh setting
+- fix save settings
+- fix update badge
+
+
 v2.2.1
 - settings button
 - added announce

@@ -14,6 +14,7 @@ function saveOptions(e) {
         rate: form.elements['rate'].checked,
         pin: form.elements['pin'].checked,
         context: form.elements['context'].checked,
+        autoRefresh: form.elements['autoRefresh'].checked,
         language: getRadioListValue(form.elements['language']),
         resources: function() {
             var resources = [];
@@ -53,6 +54,7 @@ function restoreOptions() {
         form.elements['rate'].checked = options.rate;
         form.elements['pin'].checked = options.pin;
         form.elements['context'].checked = options.context;
+        form.elements['autoRefresh'].checked = options.autoRefresh;
         setRadioListValue(form.elements['language'], options.language);
         setRadioListValue(form.elements['showOnBadge'], options.showOnBadge);
         form.elements['badgeColorEnabled'].checked = options.badgeColor;

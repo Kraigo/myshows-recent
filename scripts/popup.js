@@ -54,16 +54,17 @@ function init(chromeOptions) {
             }
 
             navigateView($views.main);
-            
+
             persistent.value('unwatched')
-                .then(function(unwatched) {
-                    if (unwatched) {
-                        buildUnwatchedList();
-                        buildAnnounces();
-                    } else {
-                        refreshLists();
-                    }
+                .then(function() {
+                    buildUnwatchedList();
+                    buildAnnounces();
                 })
+
+            if (app.options.autoRefresh) {
+                refreshLists();
+            }
+            
         } else {
             app.logout();
             navigateView($views.login);

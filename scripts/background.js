@@ -13,10 +13,11 @@ try {
 }
 
 
-var BACKGROUND_REFRESH_INTERVAL = 2700000;
+var BACKGROUND_REFRESH_INTERVAL = 45 * 60 * 1000; // 45 min
 
 function init() {
     checkNewEpisodes();
+    setInterval(checkNewEpisodes, BACKGROUND_REFRESH_INTERVAL);
 
     if (app.options.context) {
         app.setContextMenu();
@@ -55,8 +56,6 @@ function checkNewEpisodes() {
                 });
         });
     });
-
-    setTimeout(checkNewEpisodes, BACKGROUND_REFRESH_INTERVAL)
 }
 
 function createNotification(newItems) {

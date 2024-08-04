@@ -204,12 +204,17 @@ var localization = {
     SETTINGS: {
         en: 'Settings',
         ru: 'Настройки',
-        ua: 'Налаштування',
+        ua: 'Налашт.',
     },
     UNEXPECTED_ERROR: {
         en: 'Unexpected error',
         ru: 'Произошла неожиданны ошибка',
         ua: 'Відбулася несподівана помилка',
+    },
+    AUTO_REFRESH: {
+        en: 'Auto refresh on open',
+        ru: 'Авто обновление при открытии',
+        ua: 'Автоматичне оновлення при відкритті',
     },
     //* FQ DOMAIN NAME*/
     DOMAIN: {

@@ -12,6 +12,7 @@ var app = {
         pinned: [],
         language: null,
         context: true,
+        autoRefresh: false,
         showOnBadge: 'shows',
         badgeColor: null,
         shownAnnounces: []
@@ -101,21 +102,26 @@ var app = {
     },    
 
     updateUnwatchedBadge: function() {
-        switch(app.options.showOnBadge) {
-            case 'episodes': {
-                app.updateBadge(app.getUnwatchedEpisodes().length);
-                break;
+        persistent.value('unwatched').then(function(data) {
+            var unwatched = data ? JSON.parse(data) : [];
+            switch(app.options.showOnBadge) {
+                case 'episodes': {
+                    var count = app.getUnwatchedEpisodes(unwatched).length;
+                    app.updateBadge(count);
+                    break;
+                }
+                case 'shows': {
+                    var count = app.getUnwatchedShows(unwatched).length;
+                    app.updateBadge(count);
+                    break;
+                }
+                case 'hide':
+                default: {
+                    app.updateBadge();
+                    break;
+                }
             }
-            case 'shows': {
-                app.updateBadge(app.getUnwatchedShows().length);
-                break;
-            }
-            case 'hide':
-            default: {
-                app.updateBadge();
-                break;
-            }
-        }
+        });
     },
 
     initialize: function(callback) {
